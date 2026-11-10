@@ -1,0 +1,30 @@
+{
+	"admin/services/drcom": {
+		"title": "JXGM DrCOM",
+		"order": 60,
+		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": [ "luci-app-jxgm-drcom" ]
+		}
+	},
+
+	"admin/services/drcom/overview": {
+		"title": "Settings",
+		"order": 1,
+		"action": {
+			"type": "view",
+			"path": "drcom/overview"
+		}
+	},
+
+	"admin/services/drcom/log": {
+		"title": "Log",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "drcom/log"
+		}
+	}
+}

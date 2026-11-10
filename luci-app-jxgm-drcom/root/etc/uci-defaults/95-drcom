@@ -1,0 +1,15 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 wmrasw
+
+# First-install defaults: private credentials file and a boot symlink.
+#
+# The symlink is created unconditionally; whether the service actually
+# starts at boot is decided by uci drcom.main.enabled in /etc/init.d/drcom.
+
+[ -n "$IPKG_INSTROOT" ] && exit 0
+
+chmod 600 /etc/config/drcom 2>/dev/null
+/etc/init.d/drcom enable 2>/dev/null
+
+exit 0

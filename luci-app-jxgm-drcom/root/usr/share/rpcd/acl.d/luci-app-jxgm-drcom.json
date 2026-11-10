@@ -1,0 +1,24 @@
+{
+	"luci-app-jxgm-drcom": {
+		"description": "Grant UCI, service and file access to luci-app-jxgm-drcom",
+		"read": {
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "drcom" ],
+			"file": {
+				"/etc/init.d/drcom": [ "exec" ],
+				"/usr/share/drcom/drcom.sh": [ "exec" ],
+				"/sbin/logread": [ "exec" ],
+				"/var/log/drcom.log": [ "read" ],
+				"/var/run/drcom.state": [ "read" ]
+			}
+		},
+		"write": {
+			"uci": [ "drcom" ],
+			"file": {
+				"/var/log/drcom.log": [ "write" ]
+			}
+		}
+	}
+}
