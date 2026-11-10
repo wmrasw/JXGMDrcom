@@ -31,19 +31,14 @@ JXGMDrcom/
         └── usr/share/rpcd/acl.d/luci-app-jxgm-drcom.json
 ```
 
-## 它做了什么
+## 功能
 
-原来的 `drcom_web_login.sh` 是“cron 定时跑一次”：拿 WAN IP → 探测 204 → 失败就请求门户 →
-`logger` 打一行。本包把它重构成了常驻服务，行为等价但可管理：
-
-| 原脚本 | 现在 |
-| --- | --- |
-| cron 定时执行 | procd 常驻循环 + 崩溃重启 |
-| 无 WAN IP 直接退出 | 记录状态并等待重试 |
-| 账号密码直接拼 URL | `curl -G --data-urlencode` 百分号编码 |
-| 只 `logger` 一行 | 分级日志 + `/var/log/drcom.log` + 轮转 |
-| 无成功判定 | 解析 `result`/`msg`，登录后再复检 204 |
-| 无状态 | `/var/run/drcom.state`（状态 / 上次登录 / 最近结果） |
+- **procd 常驻服务**：定时探测外网（204），掉线才登录；失败按重试间隔重试，连续失败进入冷静期
+- **完整可配的门户请求**：门户地址、运营商后缀、设备类型（账号前缀 + `terminal_type` 自动配对）、`v` 参数、User-Agent、真实/占位 MAC
+- **状态与日志**：`/var/run/drcom.state`（状态、上次登录、最近结果）+ `/var/log/drcom.log`（自动轮转）
+- **LuCI 页面**：运行状态、立即登录/重启/停止、配置三个分页、日志页（可暂停刷新、清除日志）
+- **门户诊断**：连通性检测地址改完自动探测并显示结果；上行 IP、上行端口 MAC 直接展示
+- **可选改 MAC**：把上行端口的 MAC 写入 `/etc/config/network` 并重载网络（带二次确认）
 
 ## 命令
 
@@ -62,10 +57,15 @@ JXGMDrcom/
 
 ### 方式一：下载 Release（推荐）
 
-从 [Releases](https://github.com/wmrasw/JXGMDrcom/releases) 下载 `luci-app-jxgm-drcom_*_all.ipk`，上传到路由器后：
+从 [Releases](https://github.com/wmrasw/JXGMDrcom/releases) 下载对应格式的包：
 
 ```sh
-opkg install /tmp/luci-app-jxgm-drcom_1.0.0-r1_all.ipk
+# opkg（OpenWrt 24.10 及更早、Kwrt 等仍用 opkg 的固件）
+opkg install /tmp/luci-app-jxgm-drcom_1.0.1-r1_all.ipk
+
+# apk（OpenWrt 25.12 及更新版本）
+apk add --allow-untrusted /tmp/luci-app-jxgm-drcom-1.0.1-r1.apk
+
 /etc/init.d/drcom enable
 /etc/init.d/drcom start
 ```
@@ -88,7 +88,7 @@ make -j$(nproc)
 ./scripts/feeds update -a && ./scripts/feeds install -a
 cp -r luci-app-jxgm-drcom package/
 make package/luci-app-jxgm-drcom/compile V=s
-# 产物：bin/packages/<arch>/luci/luci-app-jxgm-drcom_1.0.0-r1_all.ipk
+# 产物：bin/packages/<arch>/luci/luci-app-jxgm-drcom_1.0.1-r1_all.ipk
 ```
 
 > Makefile 用 `$(TOPDIR)/feeds/*/luci.mk` 搜索 luci feed，Kwrt 这类改了 feed 目录名的树也能编译。
@@ -100,7 +100,7 @@ make package/luci-app-jxgm-drcom/compile V=s
 
 ```sh
 python tools/mkipk.py
-# dist/luci-app-jxgm-drcom_1.0.0-r1_all.ipk
+# dist/luci-app-jxgm-drcom_1.0.1-r1_all.ipk
 ```
 
 ## 配置项
@@ -128,8 +128,18 @@ python tools/mkipk.py
 
 ## 关于共享检测
 
-原脚本里提到过：校园网有防共享检测，建议装 **UA3F** 插件并启用，否则可能被判定共享而踢下线
-（学校不封号，一般只是掉线）。本包不包含 UA3F，需要单独安装。
+部分校园网会做共享检测，仅靠路由器拨号可能被判定为「多设备共享」而踢下线。
+建议配合 [UA3F](https://github.com/SunBK201/UA3F) 之类的 UA 改写插件使用。本包不包含 UA3F。
+
+## 相关项目
+
+- [mchome/dogcom](https://github.com/mchome/dogcom) —— DrCOM 802.1X 协议的 C 实现
+- [drcoms/drcom-generic](https://github.com/drcoms/drcom-generic) —— 协议参数与抓包资料
+- [sweetcornna/jlu_drcom](https://github.com/sweetcornna/jlu_drcom) —— OpenWrt 上的 DrCOM 服务化打包参考
+- [Barabama/RuijieEportal](https://github.com/Barabama/RuijieEportal) —— 锐捷 ePortal 网页认证脚本
+- [ken-arch/drcom-](https://github.com/ken-arch/drcom-) —— 简易 DrCOM 自动登录脚本
+
+本项目面向网页认证（ePortal），与上述项目没有代码依赖关系。
 
 ## 真机验证
 

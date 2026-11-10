@@ -1,4 +1,4 @@
-name: build-ipk
+name: build
 
 on:
   push:
@@ -12,37 +12,78 @@ permissions:
 
 jobs:
   ipk:
+    name: ipk (opkg)
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
       - name: Build ipk
         run: |
           python3 tools/mkipk.py
-          cd dist
-          sha256sum ./*.ipk > sha256sums.txt
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-ipk
+          path: dist/*.ipk
+
+  apk:
+    name: apk (OpenWrt 25.12 SDK)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build apk with the official SDK
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: x86_64-25.12.0
+          FEEDNAME: jxgmdrcom
+          PACKAGES: luci-base luci-app-jxgm-drcom
+          V: s
+
+      - name: Collect apk
+        run: |
+          mkdir -p dist
+          find bin/packages -name '*.apk' -exec cp -v {} dist/ \;
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-apk
+          path: dist/*.apk
+
+  release:
+    name: release
+    needs: [ ipk, apk ]
+    if: always() && startsWith(github.ref, 'refs/tags/v') && needs.ipk.result == 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: package-*
+          merge-multiple: true
+
+      - name: Checksums
+        run: |
+          cd artifacts
+          sha256sum ./*.ipk ./*.apk > sha256sums.txt 2>/dev/null || sha256sum ./*.ipk > sha256sums.txt
           cat sha256sums.txt
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: luci-app-jxgm-drcom-ipk
-          path: |
-            dist/*.ipk
-            dist/sha256sums.txt
-
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/*.ipk
-            dist/sha256sums.txt
+            artifacts/*.ipk
+            artifacts/*.apk
+            artifacts/sha256sums.txt
           generate_release_notes: true
