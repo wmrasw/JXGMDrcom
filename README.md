@@ -149,6 +149,10 @@ python tools/mkipk.py
 
 - 手工部署的文件不在 opkg 数据库里，刷固件后需要重新安装。
 
+## 变更记录
+
+见 [CHANGELOG.md](CHANGELOG.md)。
+
 ## 许可
 
 本项目以 [Apache License 2.0](LICENSE) 发布，同时附带 [NOTICE](NOTICE) 文件。

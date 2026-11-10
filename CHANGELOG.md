@@ -1,0 +1,42 @@
+# Changelog
+
+本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 格式，
+版本号遵循语义化版本（`MAJOR.MINOR.PATCH`）。
+
+## [1.0.1] - 2026-11-10
+
+### Added
+
+- 通过 OpenWrt 25.12 官方 SDK 构建 `apk` 包，Release 同时提供 `ipk` 与 `apk`
+- `CHANGELOG.md`，发版时自动提取对应版本段落作为 Release 说明
+
+### Changed
+
+- 版本号 `1.0.0` → `1.0.1`
+- README 重写功能说明，补充 Release / feed / 源码树 / 免 SDK 四种安装方式
+
+### Removed
+
+- README 中关于第三方 UA 改写插件的引导性描述
+
+## [1.0.0] - 2026-11-10
+
+首个正式版本。
+
+### Added
+
+- procd 常驻服务：定时探测外网（HTTP 204），掉线后才登录，支持崩溃重启
+- 门户登录参数完整可配：门户地址、账号、密码、运营商后缀、`v` 参数、User-Agent、MAC
+- 设备类型选项：自动配对账号前缀与 `terminal_type`（电脑 `,0,` + 1、手机 `,1,` + 2）
+- 登录失败处理：重试间隔、连续失败次数、冷静期
+- 状态文件 `/var/run/drcom.state`（状态 / 上次登录 / 最近结果）
+- 日志 `/var/log/drcom.log`，带大小轮转
+- LuCI 页面：运行状态、立即登录 / 重启 / 停止、基本 / 门户 / 高级三页配置
+- 日志页：可暂停刷新、清除日志，切到后台自动停止轮询
+- 上行 IP、上行端口 MAC 展示；可选修改上行端口 MAC（写入 `/etc/config/network`）
+- 连通性检测地址改完自动探测并显示结果
+- `drcom.sh` 子命令：`run` / `once` / `login` / `check` / `probe` / `ip` / `mac` / `ua` / `set-mac`
+- Apache-2.0 许可，含 `LICENSE`、`NOTICE` 与全部源文件 SPDX 标识
+
+[1.0.1]: https://github.com/wmrasw/JXGMDrcom/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/wmrasw/JXGMDrcom/releases/tag/v1.0.0
