@@ -126,11 +126,6 @@ python tools/mkipk.py
 | `user_agent` | 空 | 留空用 curl 默认 UA（页面提示里显示），填写则覆盖 |
 | `log_level` | `info` | error / warn / info / debug |
 
-## 关于共享检测
-
-部分校园网会做共享检测，仅靠路由器拨号可能被判定为「多设备共享」而踢下线。
-建议配合 [UA3F](https://github.com/SunBK201/UA3F) 之类的 UA 改写插件使用。本包不包含 UA3F。
-
 ## 相关项目
 
 - [mchome/dogcom](https://github.com/mchome/dogcom) —— DrCOM 802.1X 协议的 C 实现
@@ -152,8 +147,6 @@ python tools/mkipk.py
 
 ## 已知限制
 
-- 页头大标题依赖主题行为，插件用移除 `vt-repeat` 类的方式规避，换主题后可能失效；
-- 防共享检测需要另装 UA3F，本包不包含；
 - 手工部署的文件不在 opkg 数据库里，刷固件后需要重新安装。
 
 ## 许可
