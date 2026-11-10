@@ -3,6 +3,9 @@
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 格式，
 版本号遵循语义化版本（`MAJOR.MINOR.PATCH`）。
 
+只记录用户可感知的变化：功能、行为、安装方式、兼容性。纯文档措辞、排版、
+截图、内部重构不写在这里。
+
 ## [1.0.1] - 2026-11-10
 
 ### Added
@@ -13,11 +16,7 @@
 ### Changed
 
 - 版本号 `1.0.0` → `1.0.1`
-- README 重写功能说明，补充 Release / feed / 源码树 / 免 SDK 四种安装方式
-
-### Removed
-
-- README 中关于第三方 UA 改写插件的引导性描述
+- 提供 Release、feed、源码树、免 SDK 四种安装方式
 
 ## [1.0.0] - 2026-11-10
 
