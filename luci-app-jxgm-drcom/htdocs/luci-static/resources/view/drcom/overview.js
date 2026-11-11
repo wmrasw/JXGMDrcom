@@ -545,7 +545,9 @@ return view.extend({
 						'href': 'https://github.com/wmrasw/JXGMDrcom',
 						'target': '_blank',
 						'rel': 'noopener'
-					}, _('项目主页')))
+					}, _('项目主页'))),
+				E('div', { 'class': 'right', 'style': 'margin-top:1rem' },
+					E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('关闭')))
 			]);
 		}
 
@@ -555,9 +557,10 @@ return view.extend({
 				'class': 'cbi-button cbi-button-neutral',
 				'title': _('关于插件'),
 				'aria-label': _('关于插件'),
-				'style': 'flex:0 0 auto;width:2rem;height:2rem;padding:0;margin-top:.35rem;'
-					+ 'border-radius:50%;text-align:center;font-style:italic;'
-					+ 'font-family:serif;font-weight:700',
+				'style': 'flex:0 0 auto;box-sizing:border-box;width:2rem;min-width:2rem;'
+					+ 'max-width:2rem;height:2rem;padding:0;margin-top:.35rem;'
+					+ 'border-radius:50%;display:inline-flex;align-items:center;'
+					+ 'justify-content:center;font:italic 700 1rem/1 Georgia,serif',
 				'click': showAbout
 			}, 'i');
 		}

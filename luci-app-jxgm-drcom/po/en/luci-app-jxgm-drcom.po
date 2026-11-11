@@ -297,3 +297,6 @@ msgstr "Project page"
 msgid "已在江西工业贸易职业技术学院红谷滩校区于 2026.11 测试通过。"
 msgstr "Tested at the Honggutan campus of Jiangxi Industry and Trade Vocational College in Nov 2026."
 
+msgid "关闭"
+msgstr "Close"
+
