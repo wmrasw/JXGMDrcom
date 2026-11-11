@@ -14,6 +14,10 @@
 var STATEFILE = '/var/run/drcom.state';
 var SCRIPT = '/usr/share/drcom/drcom.sh';
 
+// Keep in sync with PKG_VERSION in the Makefile; the CI build fails if they
+// disagree, because the about dialog reads this constant.
+var PKG_VERSION = '1.0.2';
+
 var callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
@@ -521,6 +525,43 @@ return view.extend({
 				startOrRestart(action);
 		}
 
+		function showAbout() {
+			var row = function(label, value) {
+				return E('div', { 'style': 'display:flex;gap:.75rem;padding:.15rem 0' }, [
+					E('span', { 'style': 'color:var(--muted-text,#8898aa);flex:0 0 4.5rem' }, label),
+					E('span', {}, value)
+				]);
+			};
+
+			ui.showModal(_('关于插件'), [
+				row(_('名称'), 'JXGM DrCOM'),
+				row(_('版本'), PKG_VERSION),
+				row(_('许可证'), 'Apache-2.0'),
+				row(_('作者'), 'wmrasw'),
+				E('p', { 'style': 'margin:.75rem 0 0;line-height:1.5' },
+					_('已在江西工业贸易职业技术学院红谷滩校区于 2026.11 测试通过。')),
+				E('p', { 'style': 'margin:.5rem 0 0' },
+					E('a', {
+						'href': 'https://github.com/wmrasw/JXGMDrcom',
+						'target': '_blank',
+						'rel': 'noopener'
+					}, _('项目主页')))
+			]);
+		}
+
+		function aboutButton() {
+			return E('button', {
+				'type': 'button',
+				'class': 'cbi-button cbi-button-neutral',
+				'title': _('关于插件'),
+				'aria-label': _('关于插件'),
+				'style': 'flex:0 0 auto;width:2rem;height:2rem;padding:0;margin-top:.35rem;'
+					+ 'border-radius:50%;text-align:center;font-style:italic;'
+					+ 'font-family:serif;font-weight:700',
+				'click': showAbout
+			}, 'i');
+		}
+
 		return m.render().then(function(node) {
 			node.addEventListener('click', handleAction);
 
@@ -546,12 +587,18 @@ return view.extend({
 				new MutationObserver(stripRepeat).observe(titleEl,
 					{ attributes: true, attributeFilter: [ 'class' ] });
 
-			return E([
+			var info = E('div', { 'style': 'flex:1 1 auto;min-width:0' }, [
 				titleEl,
 				E('p', {
 					'class': 'cbi-map-descr',
 					'style': 'color: var(--muted-text, #8898aa)'
-				}, _('ePortal is cheap, show me the network.')),
+				}, _('ePortal is cheap, show me the network.'))
+			]);
+
+			return E([
+				E('div', {
+					'style': 'display:flex;align-items:flex-start;gap:.75rem'
+				}, [ info, aboutButton() ]),
 				node
 			]);
 		});

@@ -21,6 +21,13 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Check version consistency
+        run: |
+          mk=$(sed -n 's/^PKG_VERSION:=//p' luci-app-jxgm-drcom/Makefile)
+          js=$(sed -n "s/.*var PKG_VERSION = '\([^']*\)'.*/\1/p" luci-app-jxgm-drcom/htdocs/luci-static/resources/view/drcom/overview.js)
+          echo "Makefile=$mk overview.js=$js"
+          [ -n "$mk" ] && [ "$mk" = "$js" ]
+
       - name: Build ipk
         run: |
           python3 tools/mkipk.py
