@@ -353,7 +353,7 @@ return view.extend({
 		o.optional = true;
 
 		o = s.taboption('basic', form.Value, 'operator', _('运营商'),
-			_('请选择账号对应的宽带运营商。'));
+			_('选择账号对应的宽带运营商。'));
 		o.value('unicom', _('中国联通 (unicom)'));
 		o.value('cmcc', _('中国移动 (cmcc)'));
 		o.value('telecom', _('中国电信 (telecom)'));
