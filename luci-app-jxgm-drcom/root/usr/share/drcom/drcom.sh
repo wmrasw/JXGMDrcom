@@ -215,7 +215,7 @@ is_online() {
 # POST/GET to the eportal API.  Everything is percent-encoded by curl, so
 # passwords containing &, +, = or non-ASCII characters work as expected.
 portal_login() {
-	local ip mac account prefix ttype v resp rc json result msg
+	local ip mac account prefix ttype v resp rc json result msg remain
 
 	ip=$(wan_ip)
 	if [ -z "$ip" ]; then
@@ -306,6 +306,26 @@ portal_login() {
 			log info "already online: $msg"
 			state_set online "$msg"
 			return 0
+			;;
+	esac
+
+	# Anti-sharing ban: the portal pauses the account and returns the remaining
+	# seconds, e.g. "…账号将被停用一段时间 ... 161 s". Retrying during the pause
+	# only returns the same message, so surface it as its own state.
+	case "$msg" in
+		*共享*|*路由器*)
+			remain=$(printf '%s' "$msg" |
+				sed -n 's/.*\.\.\.[[:space:]]*\([0-9][0-9]*\)[[:space:]]*s.*/\1/p')
+
+			if [ -n "$remain" ]; then
+				log warn "shared-network block: account paused, ${remain}s remaining"
+				state_set auth-failed "被判定共享，${remain} 秒后可重试"
+			else
+				log warn "shared-network block: $msg"
+				state_set auth-failed "$msg"
+			fi
+
+			return 1
 			;;
 	esac
 
