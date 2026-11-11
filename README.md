@@ -115,34 +115,36 @@ python tools/mkipk.py
 ## 常见问题
 
 **登录被拒（`login rejected: ...`）**
+
 看 `msg` 里的原文：密码错误、运营商不匹配、账号格式不对都会回显。日志在 `/var/log/drcom.log`，
 也可以直接用 `drcom.sh login` 在 SSH 里复现一次。
 
 **提示「IP 已在线」**
+
 说明该出口 IP 的会话仍然有效，属于正常情况；要换账号或运营商，需要先在校园网自助服务里下线，
 再点「立即登录」。
 
-**提示「本帐号已被检测到使用共享软件或路由器，请停止使用，账号将被停用一段时间 ... 161 s」**
+**提示「本帐号已被检测到使用共享软件或路由器，请停止使用，账号将被停用一段时间 ... 180 s」**
 
-Dr.COM 的防代理 / 防共享检测：末尾数字是剩余秒数，期间重新登录会一直回传倒计时，到点自动恢复。
+Dr.COM 的防代理 / 防共享检测：末尾的数字是剩余秒数，期间重新登录会一直回传倒计时，到点自动恢复。
 插件会把剩余秒数写进日志和「最近结果」，不需要手动处理。
-
-按观察到的一次 161 s 反推，停用窗口约为 180 秒（3 分钟）。
 
 **怎么降低被判定共享的概率**
 
-- 用 [UA3F](https://github.com/SunBK201/UA3F) 或 [ua2f](https://github.com/ysc3839/ua2f) 统一 HTTP User-Agent；
-- 用防火墙 mangle 把出站 TTL 固定成同一个值；
-- 关掉代理软件、P2P 下载、虚拟机共享等特征明显的流量。
+- 用 [UA3F](https://github.com/SunBK201/UA3F) 或 [ua2f](https://github.com/ysc3839/ua2f) 统一 HTTP UA；
+- 用防火墙固定出站 TTL、去掉 TCP 时间戳等特征。
 
 **页面显示「已停止」**
+
 依次检查：`/etc/config/drcom` 里 `username`、`password` 是否为空；`uci get drcom.main.enabled` 是否为 1；
 `logread -e drcom | tail` 与 `/var/log/drcom.log` 里有没有 `username or password missing` 之类的报错。
 
 **日志和状态重启后空了**
+
 `/var/log/drcom.log`、`/var/run/drcom.state` 都在 tmpfs（`/var`）里，重启即清空，属于预期行为。
 
 **改 MAC 之后上不了网**
+
 把原 MAC 填回去再点一次「修改」即可；原值可以在「上行端口 MAC」里看到。
 
 **怎么卸载**
