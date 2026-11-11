@@ -28,6 +28,9 @@ jobs:
           echo "Makefile=$mk overview.js=$js"
           [ -n "$mk" ] && [ "$mk" = "$js" ]
 
+      - name: Check translations
+        run: python3 tools/check-i18n.py
+
       - name: Build ipk
         run: |
           python3 tools/mkipk.py

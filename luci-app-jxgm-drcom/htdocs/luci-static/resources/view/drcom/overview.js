@@ -59,7 +59,7 @@ function formatLast(st) {
 	var ts = st.last_login ? formatTime(st.last_login) : '';
 
 	if (st.status === 'online' && ts && msg)
-		return msg + ' · 上次登录 ' + ts;
+		return msg + ' · ' + _('上次登录') + ' ' + ts;
 
 	return msg || ts || '—';
 }
@@ -99,7 +99,7 @@ function runInit(action) {
 }
 
 var probeState = { text: '—' };
-var macState = { text: '读取中…' };
+var macState = { text: '' };
 var ipState = { text: '—' };
 var probeSeq = 0;
 var probeTimer = null;
@@ -402,7 +402,8 @@ return view.extend({
 		o.rawhtml = true;
 		o.optional = true;
 		o.cfgvalue = function() {
-			return '<span id="drcom-real-mac">%s</span>'.format(escapeHtml(macState.text));
+			return '<span id="drcom-real-mac">%s</span>'
+				.format(escapeHtml(macState.text || _('读取中…')));
 		};
 
 		o = s.taboption('portal', form.DummyValue, '_mac_edit', _('修改上行端口 MAC'),
@@ -535,6 +536,7 @@ return view.extend({
 
 			ui.showModal(_('关于插件'), [
 				row(_('名称'), 'JXGM DrCOM'),
+				row(_('包名'), 'luci-app-jxgm-drcom'),
 				row(_('版本'), PKG_VERSION),
 				row(_('许可证'), 'Apache-2.0'),
 				row(_('作者'), 'wmrasw'),

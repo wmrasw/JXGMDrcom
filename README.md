@@ -35,10 +35,10 @@
 
 ```sh
 # opkg（OpenWrt 24.10 及更早、ImmortalWrt、Kwrt 等仍用 opkg 的固件）
-opkg install /tmp/luci-app-jxgm-drcom_1.0.1-r1_all.ipk
+opkg install /tmp/luci-app-jxgm-drcom_1.0.2-r1_all.ipk
 
 # apk（OpenWrt 25.12 及更新版本）
-apk add --allow-untrusted /tmp/luci-app-jxgm-drcom-1.0.1-r1.apk
+apk add --allow-untrusted /tmp/luci-app-jxgm-drcom-1.0.2-r1.apk
 
 /etc/init.d/drcom enable
 /etc/init.d/drcom start

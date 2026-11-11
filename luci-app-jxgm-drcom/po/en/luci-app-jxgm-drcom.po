@@ -300,3 +300,12 @@ msgstr "Tested at the Honggutan campus of Jiangxi Industry and Trade Vocational 
 msgid "关闭"
 msgstr "Close"
 
+msgid "包名"
+msgstr "Package"
+
+msgid "上次登录"
+msgstr "Last login"
+
+msgid "读取中…"
+msgstr "Reading…"
+
