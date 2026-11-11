@@ -31,6 +31,8 @@ FILES = [
      "usr/share/luci/menu.d/luci-app-jxgm-drcom.json", 0o644),
     ("root/usr/share/rpcd/acl.d/luci-app-jxgm-drcom.json",
      "usr/share/rpcd/acl.d/luci-app-jxgm-drcom.json", 0o644),
+    ("root/usr/lib/lua/luci/i18n/luci-app-jxgm-drcom.en.lmo",
+     "usr/lib/lua/luci/i18n/luci-app-jxgm-drcom.en.lmo", 0o644),
     ("htdocs/luci-static/resources/view/drcom/overview.js",
      "www/luci-static/resources/view/drcom/overview.js", 0o644),
     ("htdocs/luci-static/resources/view/drcom/log.js",

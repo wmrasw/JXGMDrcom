@@ -24,6 +24,7 @@
 - **LuCI 页面**：运行状态、立即登录 / 重启 / 停止、三页配置、日志页（可暂停刷新、清除日志）
 - **门户诊断**：连通性检测地址改完自动探测并显示结果；上行 IP、上行端口 MAC 直接展示
 - **可选改 MAC**：把上行端口的 MAC 写入 `/etc/config/network` 并重载网络（带二次确认）
+- **中文 / English 界面**：跟随系统语言切换，翻译随包内置，不需要额外装语言包
 
 ## 安装
 
@@ -166,9 +167,12 @@ JXGMDrcom/
 │   └── 02-设计方案.md       # 认证逻辑、UCI 模型、页面设计
 ├── tools/
 │   ├── mkdeploy.py          # 生成手工部署用的 tar.gz
-│   └── mkipk.py             # 不依赖 SDK 生成 ipk
+│   ├── mkipk.py             # 不依赖 SDK 生成 ipk
+│   ├── lmo.py               # .po -> LuCI .lmo 编译器
+│   └── build-i18n.py        # 生成 root/ 下的语言目录
 └── luci-app-jxgm-drcom/     # 可直接放进 OpenWrt 源码树的包目录
     ├── Makefile
+    ├── po/en/luci-app-jxgm-drcom.po   # 英文翻译源
     ├── htdocs/luci-static/resources/view/drcom/
     │   ├── overview.js      # 状态 + 立即登录 + 启停 + 配置
     │   └── log.js           # 日志（5s 轮询）
@@ -178,7 +182,8 @@ JXGMDrcom/
         ├── etc/uci-defaults/95-drcom  # 安装时收紧权限
         ├── usr/share/drcom/drcom.sh   # 登录逻辑
         ├── usr/share/luci/menu.d/luci-app-jxgm-drcom.json
-        └── usr/share/rpcd/acl.d/luci-app-jxgm-drcom.json
+        ├── usr/share/rpcd/acl.d/luci-app-jxgm-drcom.json
+        └── usr/lib/lua/luci/i18n/luci-app-jxgm-drcom.en.lmo  # 编译产物
 ```
 
 ## 相关项目

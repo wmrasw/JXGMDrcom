@@ -6,6 +6,16 @@
 只记录用户可感知的变化：功能、行为、安装方式、兼容性。纯文档措辞、排版、
 截图、内部重构不写在这里。
 
+## [1.0.2] - 2026-11-12
+
+### Added
+
+- 界面支持英文：随包内置 `po/en` 编译出的 `.lmo`，跟随系统语言自动切换（中文无需额外包）
+
+### Changed
+
+- 共享检测被强制下线时，日志与「最近结果」显示剩余秒数，不再混在「登录被拒」里
+
 ## [1.0.1] - 2026-11-10
 
 ### Added
@@ -37,5 +47,6 @@
 - `drcom.sh` 子命令：`run` / `once` / `login` / `check` / `probe` / `ip` / `mac` / `ua` / `set-mac`
 - Apache-2.0 许可，含 `LICENSE`、`NOTICE` 与全部源文件 SPDX 标识
 
+[1.0.2]: https://github.com/wmrasw/JXGMDrcom/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/wmrasw/JXGMDrcom/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wmrasw/JXGMDrcom/releases/tag/v1.0.0

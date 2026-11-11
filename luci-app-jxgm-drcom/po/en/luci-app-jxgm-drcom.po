@@ -1,0 +1,278 @@
+# English translations for luci-app-jxgm-drcom
+#
+# The source strings are Chinese so that the plugin is usable without
+# any catalog installed; LuCI falls back to the msgid.
+msgid ""
+msgstr ""
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "从未"
+msgstr "Never"
+
+msgid "运行中"
+msgstr "Running"
+
+msgid "已停止"
+msgstr "Stopped"
+
+msgid "命令执行失败（退出码 %d）。"
+msgstr "Command failed (exit code %d)."
+
+msgid "操作“%s”完成。"
+msgstr "\"%s\" finished."
+
+msgid "未填写"
+msgstr "Not set"
+
+msgid "检测中…"
+msgstr "Probing…"
+
+msgid "无响应"
+msgstr "No response"
+
+msgid "可用（HTTP 204）"
+msgstr "Reachable (HTTP 204)"
+
+msgid "不可用（%s）"
+msgstr "Unreachable (%s)"
+
+msgid "检测失败"
+msgstr "Probe failed"
+
+msgid "未知"
+msgstr "Unknown"
+
+msgid "上行端口 %s 的 MAC 已修改，网络会短暂重连。"
+msgstr "Uplink MAC changed to %s; the network reconnects briefly."
+
+msgid "(未知)"
+msgstr "(unknown)"
+
+msgid "修改失败：%s"
+msgstr "Change failed: %s"
+
+msgid "完成。"
+msgstr "Done."
+
+msgid "服务未运行，请到“日志”页查看原因。"
+msgstr "Service is not running; see the Log page for details."
+
+msgid "运行状态"
+msgstr "Status"
+
+msgid "服务状态"
+msgstr "Service"
+
+msgid "上行 IP"
+msgstr "Uplink IP"
+
+msgid "最近结果"
+msgstr "Last result"
+
+msgid "服务控制"
+msgstr "Control"
+
+msgid "操作"
+msgstr "Actions"
+
+msgid "立即登录"
+msgstr "Login now"
+
+msgid "重启"
+msgstr "Restart"
+
+msgid "停止"
+msgstr "Stop"
+
+msgid "设置"
+msgstr "Settings"
+
+msgid "基本"
+msgstr "Basic"
+
+msgid "门户"
+msgstr "Portal"
+
+msgid "高级"
+msgstr "Advanced"
+
+msgid "开机自启"
+msgstr "Autostart"
+
+msgid "勾选后，服务将随系统开机自启。"
+msgstr "Start the service automatically at boot."
+
+msgid "用户名"
+msgstr "Username"
+
+msgid "学号以 T 开头，例如 T202XXXXX。"
+msgstr "Student ID, for example T202XXXXX."
+
+msgid "密码"
+msgstr "Password"
+
+msgid "运营商"
+msgstr "ISP"
+
+msgid "选择账号对应的宽带运营商。"
+msgstr "Select the ISP that belongs to the account."
+
+msgid "中国联通 (unicom)"
+msgstr "China Unicom (unicom)"
+
+msgid "中国移动 (cmcc)"
+msgstr "China Mobile (cmcc)"
+
+msgid "中国电信 (telecom)"
+msgstr "China Telecom (telecom)"
+
+msgid "留空（不加 @ 后缀）"
+msgstr "Leave empty (no @ suffix)"
+
+msgid "设备类型"
+msgstr "Device type"
+
+msgid "决定账号前缀与 terminal_type，影响校园网后台显示的设备类型。"
+msgstr "Sets the account prefix and terminal_type reported to the portal."
+
+msgid "电脑（,0, + terminal_type=1）"
+msgstr "PC (,0, + terminal_type=1)"
+
+msgid "手机（,1, + terminal_type=2）"
+msgstr "Mobile (,1, + terminal_type=2)"
+
+msgid "门户登录地址"
+msgstr "Portal login URL"
+
+msgid "连通性检测地址"
+msgstr "Connectivity check URL"
+
+msgid "返回 HTTP 204 即视为外网在线。"
+msgstr "An HTTP 204 response means the internet is reachable."
+
+msgid "检测结果"
+msgstr "Probe result"
+
+msgid "上行接口"
+msgstr "Uplink interface"
+
+msgid "读取 IP 与 MAC 的网卡；只用于本插件的认证流量。"
+msgstr "Interface used to read the IP and MAC for login traffic."
+
+msgid "上行端口 MAC"
+msgstr "Uplink MAC"
+
+msgid "修改上行端口 MAC"
+msgstr "Change uplink MAC"
+
+msgid "只修改上行端口的 MAC；会写入 /etc/config/network 并重载网络，短暂断网。"
+msgstr "Writes the MAC to /etc/config/network and reloads the network (brief disconnect)."
+
+msgid "修改"
+msgstr "Apply"
+
+msgid "检测间隔"
+msgstr "Check interval"
+
+msgid "两次连通性检测之间的秒数。"
+msgstr "Seconds between connectivity checks."
+
+msgid "重试间隔"
+msgstr "Retry interval"
+
+msgid "单次登录失败后等待多少秒再重试。"
+msgstr "Seconds to wait before retrying a failed login."
+
+msgid "连续失败次数"
+msgstr "Failures before cooldown"
+
+msgid "连续失败多少次后进入冷静期。"
+msgstr "Consecutive failures allowed before cooldown."
+
+msgid "冷静期"
+msgstr "Cooldown"
+
+msgid "进入冷静期后多少秒内不再尝试登录。"
+msgstr "Seconds to stay idle after entering cooldown."
+
+msgid "连接超时"
+msgstr "Connect timeout"
+
+msgid "请求多少秒无响应视为失败。"
+msgstr "A request without a response within this many seconds fails."
+
+msgid "日志级别"
+msgstr "Log level"
+
+msgid "错误"
+msgstr "Error"
+
+msgid "警告"
+msgstr "Warning"
+
+msgid "信息"
+msgstr "Info"
+
+msgid "调试"
+msgstr "Debug"
+
+msgid "v 参数"
+msgstr "\"v\" parameter"
+
+msgid "门户请求里的 v 参数，默认 7911；固定值不影响登录。"
+msgstr "The v parameter sent to the portal (default 7911)."
+
+msgid "每次登录随机生成 v"
+msgstr "Random v per login"
+
+msgid "勾选后忽略上面填写的值，每次登录发送随机四位数。"
+msgstr "Ignore the value above and send a random 4-digit number on each login."
+
+msgid "留空则使用默认 UA。"
+msgstr "Leave empty to use the default UA."
+
+msgid "使用真实 MAC 地址"
+msgstr "Send real MAC"
+
+msgid "默认发送占位 MAC（全 0）。勾选后发送上行接口的真实 MAC。"
+msgstr "By default a placeholder MAC (all zeros) is sent; enable to send the real uplink MAC."
+
+msgid "MAC 格式应为 AA:BB:CC:DD:EE:FF。"
+msgstr "MAC must look like AA:BB:CC:DD:EE:FF."
+
+msgid "将把上行端口的 MAC 改为 %s，写入 /etc/config/network 并重载网络，期间可能短暂断网。"
+msgstr "Set the uplink MAC to %s, write it to /etc/config/network and reload the network (brief disconnect)."
+
+msgid "取消"
+msgstr "Cancel"
+
+msgid "继续"
+msgstr "Continue"
+
+msgid "暂无日志。"
+msgstr "No log entries."
+
+msgid "加载中…"
+msgstr "Loading…"
+
+msgid "停止刷新"
+msgstr "Pause"
+
+msgid "继续刷新"
+msgstr "Resume"
+
+msgid "日志已清空。"
+msgstr "Log cleared."
+
+msgid "清除日志"
+msgstr "Clear log"
+
+msgid "DrCOM 日志"
+msgstr "DrCOM log"
+
+msgid "最近 %d 行日志（%s），每 %d 秒刷新。"
+msgstr "Last %d lines (%s), refreshed every %d seconds."
+
