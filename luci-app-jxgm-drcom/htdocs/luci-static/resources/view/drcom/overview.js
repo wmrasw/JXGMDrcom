@@ -80,10 +80,21 @@ function escapeHtml(s) {
 		.replace(/"/g, '&quot;');
 }
 
-function badgeHtml(running) {
-	return '<span id="drcom-service-state" class="label %s">%s</span>'.format(
-		running ? 'success' : 'warning',
-		running ? _('运行中') : _('已停止'));
+function badgeState(running, st) {
+	var paused = running && st && st.status === 'config-error';
+
+	return {
+		paused: paused,
+		cls: running && !paused ? 'success' : 'warning',
+		text: paused ? _('已暂停') : (running ? _('运行中') : _('已停止'))
+	};
+}
+
+function badgeHtml(running, st) {
+	var b = badgeState(running, st);
+
+	return '<span id="drcom-service-state" class="label %s">%s</span>'
+		.format(b.cls, b.text);
 }
 
 function runInit(action) {
@@ -272,13 +283,12 @@ return view.extend({
 				var run = isRunning(r[0]);
 				var st = parseState(r[1]);
 
-				var paused = run && st.status === 'config-error';
-
 				var badge = document.getElementById('drcom-service-state');
 				if (badge) {
-					badge.className = 'label ' + (run && !paused ? 'success' : 'warning');
-					badge.textContent = paused ? _('已暂停')
-						: (run ? _('运行中') : _('已停止'));
+					var b = badgeState(run, st);
+
+					badge.className = 'label ' + b.cls;
+					badge.textContent = b.text;
 				}
 
 				var lastResult = document.getElementById('drcom-last-result');
@@ -310,7 +320,7 @@ return view.extend({
 		o.rawhtml = true;
 		o.optional = true;
 		o.cfgvalue = function() {
-			return badgeHtml(running);
+			return badgeHtml(running, state);
 		};
 
 		o = s.option(form.DummyValue, '_uplink_ip', _('上行 IP'));
