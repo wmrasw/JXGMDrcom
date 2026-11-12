@@ -63,6 +63,33 @@ numeric() {
 	printf '%s' "${v:-0}"
 }
 
+# Portal messages that will not go away by retrying: a wrong password, an
+# unknown account or a missing ISP suffix. Retrying those hammers the portal
+# and can get the account locked, so back off hard instead.
+is_fatal_login_error() {
+	case "$1" in
+		*密码错误*|*账号不存在*|*用户不存在*|*运营商出口*|*选择运营商*)
+			return 0
+			;;
+	esac
+
+	return 1
+}
+
+login_error_hint() {
+	case "$1" in
+		*密码错误*)
+			echo "check the password (基本 -> 密码)"
+			;;
+		*账号不存在*|*用户不存在*)
+			echo "check the student ID (基本 -> 用户名)"
+			;;
+		*运营商出口*|*选择运营商*)
+			echo "the ISP must not be empty (基本 -> 运营商)"
+			;;
+	esac
+}
+
 # Build the portal account string: ",<prefix>,<username>[@<operator>]".
 account_string() {
 	local prefix=0
@@ -512,8 +539,16 @@ do_run() {
 			sleep "$CFG_INTERVAL"
 		else
 			fails=$((fails + 1))
+			last=$(state_get message)
 
-			if [ "$fails" -ge "$CFG_MAX_ATTEMPTS" ]; then
+			if is_fatal_login_error "$last"; then
+				hint=$(login_error_hint "$last")
+				log error "login rejected by config: $last${hint:+ ($hint)}"
+				log warn "waiting 1800s; changing /etc/config/drcom retries immediately"
+				state_set auth-failed "$last"
+				sleep 1800
+				fails=0
+			elif [ "$fails" -ge "$CFG_MAX_ATTEMPTS" ]; then
 				log warn "login failed $fails times, cooling down for ${CFG_COOLDOWN}s"
 				state_set auth-failed "连续失败 ${fails} 次，冷静期 ${CFG_COOLDOWN} 秒后重试"
 				sleep "$CFG_COOLDOWN"
