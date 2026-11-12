@@ -6,7 +6,7 @@
 
 江西工业贸易职业技术学院 **Dr.COM 城市热点校园网**的 OpenWrt LuCI 自动登录插件。
 认证走 `curl`（ePortal 网页认证），纯脚本 + 前端包，不编译二进制。
-门户地址、运营商、`v` 参数都可改，其他使用 Dr.COM ePortal 的学校可能可以用。
+门户地址、运营商、`v` 参数都可改，但其他使用 Dr.COM ePortal 的学校不一定适用。
 
 ## 兼容性
 
@@ -17,7 +17,7 @@
 
 包本身与 CPU 架构无关（`all` / `noarch`），同一个文件适用于所有设备。
 
-本插件只实现 **ePortal 网页认证**。Dr.COM 的 P（PPPoE）、X（802.1X）等客户端认证方式不适用。
+本插件只实现 **ePortal 网页认证**。Dr.COM 的 P（PPPoE）版、X（802.1X）版等客户端认证方式不适用。
 
 ## 功能
 
@@ -177,9 +177,6 @@ JXGMDrcom/
 ├── LICENSE                  # Apache License 2.0 全文
 ├── NOTICE                   # 版权与商标声明
 ├── CHANGELOG.md             # 版本变更记录
-├── docs/
-│   ├── 01-规范调研.md       # 软件包 / LuCI UI / 打包规范调研结论
-│   └── 02-设计方案.md       # 认证逻辑、UCI 模型、页面设计
 ├── tools/
 │   ├── mkdeploy.py          # 生成手工部署用的 tar.gz
 │   ├── mkipk.py             # 不依赖 SDK 生成 ipk

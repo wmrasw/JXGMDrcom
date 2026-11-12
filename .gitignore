@@ -7,3 +7,6 @@ dist/
 # Python
 __pycache__/
 *.pyc
+
+# 内部调研与设计笔记（不随仓库发布）
+docs/
