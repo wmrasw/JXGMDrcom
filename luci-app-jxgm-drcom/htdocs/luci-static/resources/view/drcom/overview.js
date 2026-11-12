@@ -597,20 +597,20 @@ return view.extend({
 				]);
 			};
 
-			ui.showModal(_('关于插件'), [
+			ui.showModal(_('关于此插件'), [
 				row(_('名称'), 'JXGM DrCOM'),
-				row(_('包名'), 'luci-app-jxgm-drcom'),
 				row(_('版本'), PKG_VERSION),
-				row(_('许可证'), 'Apache-2.0'),
-				row(_('作者'), 'wmrasw'),
+				row(_('包名'), 'luci-app-jxgm-drcom'),
+				row(_('许可证'), 'Apache License 2.0'),
+				row(_('贡献者'), 'wmrasw — ' + _('插件开发、适配等')),
 				E('p', { 'style': 'margin:.75rem 0 0;line-height:1.5' },
-					_('已在江西工业贸易职业技术学院红谷滩校区于 2026.11 测试通过。')),
+					_('已在江西工业贸易职业技术学院红谷滩校区于 2026 年 11 月测试可用。')),
 				E('p', { 'style': 'margin:.5rem 0 0' },
 					E('a', {
 						'href': 'https://github.com/wmrasw/JXGMDrcom',
 						'target': '_blank',
 						'rel': 'noopener'
-					}, _('项目主页'))),
+					}, _('GitHub 仓库'))),
 				E('div', { 'class': 'right', 'style': 'margin-top:1rem' },
 					E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('关闭')))
 			]);
@@ -620,8 +620,8 @@ return view.extend({
 			return E('button', {
 				'type': 'button',
 				'class': 'cbi-button cbi-button-neutral',
-				'title': _('关于插件'),
-				'aria-label': _('关于插件'),
+				'title': _('关于此插件'),
+				'aria-label': _('关于此插件'),
 				'style': 'flex:0 0 auto;box-sizing:border-box;'
 					+ 'width:2rem;min-width:2rem;max-width:2rem;'
 					+ 'height:2rem;min-height:2rem;max-height:2rem;'

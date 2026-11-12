@@ -52,7 +52,8 @@ def main():
     # Strings that intentionally have no translation: proper nouns and the
     # trivially translatable ones already present in luci-base.
     ignore = {'JXGM DrCOM', 'User-Agent', 'Apache-2.0', 'wmrasw',
-              'luci-app-jxgm-drcom', 'ePortal is cheap, show me the network.'}
+              'luci-app-jxgm-drcom', 'Apache License 2.0',
+              'ePortal is cheap, show me the network.'}
 
     missing = sorted(k for k in using if k not in catalog and k not in ignore)
     unused = sorted(catalog - set(using))

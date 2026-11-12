@@ -276,8 +276,8 @@ msgstr "DrCOM log"
 msgid "最近 %d 行日志（%s），每 %d 秒刷新。"
 msgstr "Last %d lines (%s), refreshed every %d seconds."
 
-msgid "关于插件"
-msgstr "About"
+msgid "关于此插件"
+msgstr "About this plugin"
 
 msgid "名称"
 msgstr "Name"
@@ -288,14 +288,14 @@ msgstr "Version"
 msgid "许可证"
 msgstr "License"
 
-msgid "作者"
-msgstr "Author"
+msgid "贡献者"
+msgstr "Contributors"
 
-msgid "项目主页"
-msgstr "Project page"
+msgid "GitHub 仓库"
+msgstr "GitHub repository"
 
-msgid "已在江西工业贸易职业技术学院红谷滩校区于 2026.11 测试通过。"
-msgstr "Tested at the Honggutan campus of Jiangxi Industry and Trade Vocational College in Nov 2026."
+msgid "已在江西工业贸易职业技术学院红谷滩校区于 2026 年 11 月测试可用。"
+msgstr "Tested at the Honggutan campus of Jiangxi Industry and Trade Vocational College in November 2026."
 
 msgid "关闭"
 msgstr "Close"
@@ -332,4 +332,7 @@ msgstr "Configuration errors (wrong password, unknown account) pause the service
 
 msgid "已暂停"
 msgstr "Paused"
+
+msgid "插件开发、适配等"
+msgstr "plugin development and adaptation"
 
