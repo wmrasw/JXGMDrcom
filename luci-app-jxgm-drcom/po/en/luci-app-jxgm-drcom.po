@@ -327,8 +327,8 @@ msgstr "Start"
 msgid "配置错误时继续重试"
 msgstr "Keep retrying on config errors"
 
-msgid "密码、账号等配置错误默认停止服务；勾选后忽略，按配置间隔重试。"
-msgstr "Configuration errors (wrong password, unknown account) stop the service; ignore them and retry at the configured interval."
+msgid "密码、账号等配置错误默认暂停，保存配置后恢复；勾选后忽略，按间隔重试。"
+msgstr "Configuration errors (wrong password, unknown account) pause the service until the config is saved; enable this to ignore them and keep retrying."
 
 msgid "已暂停"
 msgstr "Paused"

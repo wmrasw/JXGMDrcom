@@ -457,7 +457,7 @@ return view.extend({
 
 		o = s.taboption('advanced', form.Flag, 'ignore_config_error',
 			_('配置错误时继续重试'),
-			_('密码、账号等配置错误默认停止服务；勾选后忽略，按配置间隔重试。'));
+			_('密码、账号等配置错误默认暂停，保存配置后恢复；勾选后忽略，按间隔重试。'));
 		o.default = '0';
 		o.rmempty = false;
 
