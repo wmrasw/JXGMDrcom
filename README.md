@@ -26,6 +26,7 @@
 - **可选改 MAC**：把上行端口的 MAC 写入 `/etc/config/network` 并重载网络（带二次确认）
 - **中文 / English 界面**：跟随系统语言切换，翻译随包内置，不需要额外装语言包
 - **关于浮窗**：页面右上角的 ⓘ 按钮显示名称、版本、许可证、作者与实测信息
+- **手动下线**：服务控制里的「退出登录」先停服务，再向门户发送 unbind 请求，方便换号
 
 ## 安装
 
@@ -35,10 +36,10 @@
 
 ```sh
 # opkg（OpenWrt 24.10 及更早、ImmortalWrt、Kwrt 等仍用 opkg 的固件）
-opkg install /tmp/luci-app-jxgm-drcom_1.0.2-r1_all.ipk
+opkg install /tmp/luci-app-jxgm-drcom_1.0.3-r1_all.ipk
 
 # apk（OpenWrt 25.12 及更新版本）
-apk add --allow-untrusted /tmp/luci-app-jxgm-drcom-1.0.2-r1.apk
+apk add --allow-untrusted /tmp/luci-app-jxgm-drcom-1.0.3-r1.apk
 
 /etc/init.d/drcom enable
 /etc/init.d/drcom start
@@ -107,6 +108,7 @@ python tools/mkipk.py
 /usr/share/drcom/drcom.sh run            # 常驻：检测 → 掉线登录 → 间隔再检测
 /usr/share/drcom/drcom.sh once           # 检测，离线才登录（已在线直接返回）
 /usr/share/drcom/drcom.sh login          # 跳过 204 检测，直接向门户发一次登录请求
+/usr/share/drcom/drcom.sh logout         # 向门户发送 unbind 请求，手动下线当前账号
 /usr/share/drcom/drcom.sh check          # 在线 exit 0，离线 exit 1
 /usr/share/drcom/drcom.sh probe <url>    # 打印 URL 的 HTTP 状态码（000 = 不可达）
 /usr/share/drcom/drcom.sh ip             # 打印上行 IPv4 地址
@@ -123,8 +125,7 @@ python tools/mkipk.py
 
 **提示「IP 已在线」**
 
-说明该出口 IP 的会话仍然有效，属于正常情况；要换账号或运营商，需要先在校园网自助服务里下线，
-再点「立即登录」。
+说明该出口 IP 的会话仍然有效，属于正常情况；点「退出登录」先下线，再换账号或运营商重新登录。
 
 **提示「本帐号已被检测到使用共享软件或路由器，请停止使用，账号将被停用一段时间 ... 180 s」**
 

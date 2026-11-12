@@ -6,6 +6,12 @@
 只记录用户可感知的变化：功能、行为、安装方式、兼容性。纯文档措辞、排版、
 截图、内部重构不写在这里。
 
+## [1.0.3] - 2026-11-12
+
+### Added
+
+- 「退出登录」按钮：先停止服务，再调用门户的 `/portal/mac/unbind` 下线当前账号，方便换号或处理「IP 已在线」
+
 ## [1.0.2] - 2026-11-12
 
 ### Added
@@ -48,6 +54,7 @@
 - `drcom.sh` 子命令：`run` / `once` / `login` / `check` / `probe` / `ip` / `mac` / `ua` / `set-mac`
 - Apache-2.0 许可，含 `LICENSE`、`NOTICE` 与全部源文件 SPDX 标识
 
+[1.0.3]: https://github.com/wmrasw/JXGMDrcom/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/wmrasw/JXGMDrcom/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/wmrasw/JXGMDrcom/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wmrasw/JXGMDrcom/releases/tag/v1.0.0

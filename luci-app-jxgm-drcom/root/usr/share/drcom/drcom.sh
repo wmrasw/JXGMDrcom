@@ -41,7 +41,7 @@ CFG_USER_AGENT=
 LOG_LEVEL_NUM=2
 
 usage() {
-	echo "Usage: $0 {run|once|login|check|probe <url>|ip|mac|ua|set-mac <mac>}" >&2
+	echo "Usage: $0 {run|once|login|logout|check|probe <url>|ip|mac|ua|set-mac <mac>}" >&2
 	exit 1
 }
 
@@ -61,6 +61,48 @@ numeric() {
 	local v
 	v=$(printf '%s' "$1" | tr -cd '0-9' | sed 's/^0*//')
 	printf '%s' "${v:-0}"
+}
+
+# Build the portal account string: ",<prefix>,<username>[@<operator>]".
+account_string() {
+	local prefix=0
+
+	[ "$CFG_DEVICE_TYPE" = "mobile" ] && prefix=1
+
+	printf ',%s,%s' "$prefix" "$CFG_USERNAME"
+
+	[ -n "$CFG_OPERATOR" ] && printf '@%s' "$CFG_OPERATOR"
+
+	return 0
+}
+
+# Portal unbind requests carry the IP as a decimal integer.
+ip2long() {
+	local IFS=.
+	local a b c d
+
+	set -- $1
+	a=$1; b=$2; c=$3; d=$4
+
+	case "${a}${b}${c}${d}" in
+		''|*[!0-9]*) return 1 ;;
+	esac
+
+	[ -n "$d" ] || return 1
+
+	echo $(( (a << 24) | (b << 16) | (c << 8) | d ))
+}
+
+# Derive the unbind endpoint from the configured login URL.
+portal_unbind_url() {
+	case "$CFG_PORTAL_URL" in
+		*/portal/login)
+			printf '%s/portal/mac/unbind' "${CFG_PORTAL_URL%/portal/login}"
+			;;
+		*)
+			return 1
+			;;
+	esac
 }
 
 log() {
@@ -229,12 +271,11 @@ portal_login() {
 	# The portal distinguishes PC from mobile by the account prefix and the
 	# terminal_type parameter: ,0, + 1 = PC, ,1, + 2 = mobile.
 	case "$CFG_DEVICE_TYPE" in
-		mobile) prefix=1; ttype=2 ;;
-		*)      prefix=0; ttype=1 ;;
+		mobile) ttype=2 ;;
+		*)      ttype=1 ;;
 	esac
 
-	account=",${prefix},${CFG_USERNAME}"
-	[ -n "$CFG_OPERATOR" ] && account="${account}@${CFG_OPERATOR}"
+	account=$(account_string)
 
 	# The portal sends a random 4-digit v on every login; a fixed value works
 	# too, so default to the configured one and randomize only on request.
@@ -331,6 +372,82 @@ portal_login() {
 
 	log error "login rejected: $msg (result=${result:-?})"
 	state_set auth-failed "$msg"
+	return 1
+}
+
+do_logout() {
+	local ip mac account url dec v resp rc json result msg
+
+	load_config
+
+	[ -n "$CFG_USERNAME" ] || {
+		log error "username missing, nothing to log out"
+		return 1
+	}
+
+	url=$(portal_unbind_url) || {
+		log error "cannot derive unbind URL from '${CFG_PORTAL_URL}'"
+		return 1
+	}
+
+	ip=$(wan_ip)
+	if [ -z "$ip" ]; then
+		log warn "no IPv4 address on $CFG_IFACE, skip logout"
+		return 2
+	fi
+
+	mac=$(wan_mac)
+
+	# The portal's own unbind request uses the bare account, without the
+	# ",N," prefix that the login call carries.
+	account=$CFG_USERNAME
+	[ -n "$CFG_OPERATOR" ] && account="${account}@${CFG_OPERATOR}"
+
+	dec=$(ip2long "$ip") || dec=$ip
+	v=$(( ($(date +%s) + $$) % 9000 + 1000 ))
+
+	log info "logout request: account=$CFG_USERNAME v=$v"
+
+	resp=$(curl -s -G \
+		--connect-timeout "$CFG_CONNECT_TIMEOUT" \
+		--max-time $((CFG_CONNECT_TIMEOUT * 3)) \
+		--data-urlencode "callback=dr1002" \
+		--data-urlencode "user_account=${account}" \
+		--data-urlencode "wlan_user_mac=${mac}" \
+		--data-urlencode "wlan_user_ip=${dec}" \
+		--data-urlencode "jsVersion=4.2.1" \
+		--data-urlencode "v=${v}" \
+		--data-urlencode "lang=zh" \
+		"$url" 2>/dev/null)
+	rc=$?
+
+	if [ "$rc" -ne 0 ]; then
+		log error "logout request failed (curl exit $rc)"
+		return 1
+	fi
+
+	json=$(printf '%s' "$resp" |
+		sed -e 's/^[^(]*(//' -e 's/)[[:space:]]*;*[[:space:]]*$//')
+
+	if command -v jsonfilter >/dev/null 2>&1; then
+		result=$(printf '%s' "$json" | jsonfilter -e '@.result' 2>/dev/null)
+		msg=$(printf '%s' "$json" | jsonfilter -e '@.msg' 2>/dev/null)
+	else
+		result=$(printf '%s' "$json" |
+			sed -n 's/.*"result"[[:space:]]*:[[:space:]]*\(-\{0,1\}[0-9][0-9]*\).*/\1/p')
+		msg=$(printf '%s' "$json" |
+			sed -n 's/.*"msg"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+	fi
+
+	[ -n "$msg" ] || msg="(no message)"
+
+	if [ "$result" = "1" ]; then
+		log info "logout ok: $msg"
+		state_set offline "已退出登录"
+		return 0
+	fi
+
+	log warn "logout rejected: $msg"
 	return 1
 }
 
@@ -532,6 +649,7 @@ case "$1" in
 	run)   do_run ;;
 	once)  do_once ;;
 	login) do_login ;;
+	logout) do_logout ;;
 	check) do_check ;;
 	probe) do_probe "$2" ;;
 	mac)   do_mac ;;

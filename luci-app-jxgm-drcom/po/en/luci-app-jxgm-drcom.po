@@ -309,3 +309,15 @@ msgstr "Last login"
 msgid "读取中…"
 msgstr "Reading…"
 
+msgid "退出登录"
+msgstr "Log out"
+
+msgid "会先停止服务，再向门户发送下线请求；之后需要手动「启动」才能重新上网。"
+msgstr "Stops the service first, then asks the portal to end the session; start it again to go back online."
+
+msgid "已发送下线请求，详情见日志页。"
+msgstr "Logout request sent, see the log page for details."
+
+msgid "退出失败：%s"
+msgstr "Logout failed: %s"
+

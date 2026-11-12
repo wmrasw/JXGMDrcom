@@ -16,7 +16,7 @@ var SCRIPT = '/usr/share/drcom/drcom.sh';
 
 // Keep in sync with PKG_VERSION in the Makefile; the CI build fails if they
 // disagree, because the about dialog reads this constant.
-var PKG_VERSION = '1.0.2';
+var PKG_VERSION = '1.0.3';
 
 var callServiceList = rpc.declare({
 	object: 'service',
@@ -331,6 +331,8 @@ return view.extend({
 					.format(_('立即登录')),
 				'<button type="button" class="cbi-button cbi-button-neutral" data-drcom-action="restart">%s</button>'
 					.format(_('重启')),
+				'<button type="button" class="cbi-button cbi-button-neutral" data-drcom-action="logout">%s</button>'
+					.format(_('退出登录')),
 				'<button type="button" class="cbi-button cbi-button-negative" data-drcom-action="stop">%s</button>'
 					.format(_('停止'))
 			].join(' ');
@@ -500,6 +502,40 @@ return view.extend({
 			]);
 		}
 
+		function performLogout() {
+			return runInit('stop').then(function() {
+				return fs.exec(SCRIPT, [ 'logout' ]);
+			}).then(function(res) {
+				var out = String((res && res.stdout) || '').trim()
+					.split('\n').pop();
+
+				ui.addNotification(null, E('p', {},
+					out || _('已发送下线请求，详情见日志页。')), 'info');
+
+				return refreshStatus();
+			}).catch(function(err) {
+				ui.addNotification(null, E('p', {},
+					_('退出失败：%s').format(err)), 'danger');
+			});
+		}
+
+		function confirmLogout() {
+			ui.showModal(_('退出登录'), [
+				E('p', {}, _('会先停止服务，再向门户发送下线请求；之后需要手动「启动」才能重新上网。')),
+				E('div', { 'class': 'right', 'style': 'margin-top:1rem' }, [
+					E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('取消')),
+					' ',
+					E('button', {
+						'class': 'cbi-button cbi-button-negative',
+						'click': function() {
+							ui.hideModal();
+							performLogout();
+						}
+					}, _('继续'))
+				])
+			]);
+		}
+
 		function handleAction(ev) {
 			var macBtn = closestData(ev.target, 'data-drcom-mac', ev.currentTarget);
 
@@ -522,6 +558,8 @@ return view.extend({
 				runLogin().then(refreshStatus);
 			else if (action === 'stop')
 				runInit('stop').then(refreshStatus);
+			else if (action === 'logout')
+				confirmLogout();
 			else
 				startOrRestart(action);
 		}
