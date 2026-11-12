@@ -452,6 +452,12 @@ return view.extend({
 		o.placeholder = '5';
 		o.rmempty = true;
 
+		o = s.taboption('advanced', form.Flag, 'ignore_config_error',
+			_('配置错误时继续重试'),
+			_('密码错误、账号不存在、未选运营商等错误默认会停止服务；勾选后继续按重试间隔尝试。'));
+		o.default = '0';
+		o.rmempty = false;
+
 		o = s.taboption('advanced', form.ListValue, 'log_level', _('日志级别'));
 		o.value('error', _('错误'));
 		o.value('warn', _('警告'));

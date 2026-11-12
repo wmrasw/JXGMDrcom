@@ -32,6 +32,7 @@ CFG_MAX_ATTEMPTS=3
 CFG_COOLDOWN=300
 CFG_CONNECT_TIMEOUT=5
 CFG_USE_REAL_MAC=0
+CFG_IGNORE_CONFIG_ERROR=0
 CFG_LOG_LEVEL=info
 CFG_DEVICE_TYPE=pc
 CFG_V=7911
@@ -193,6 +194,7 @@ load_config() {
 	config_get CFG_COOLDOWN main cooldown
 	config_get CFG_CONNECT_TIMEOUT main connect_timeout
 	config_get_bool CFG_USE_REAL_MAC main use_real_mac 0
+	config_get_bool CFG_IGNORE_CONFIG_ERROR main ignore_config_error 0
 	config_get CFG_LOG_LEVEL main log_level
 	config_get CFG_DEVICE_TYPE main device_type
 	config_get CFG_V main v
@@ -543,12 +545,18 @@ do_run() {
 
 			if is_fatal_login_error "$last"; then
 				hint=$(login_error_hint "$last")
-				log error "login rejected by config: $last${hint:+ ($hint)}"
-				log warn "waiting 1800s; changing /etc/config/drcom retries immediately"
-				state_set auth-failed "$last"
-				sleep 1800
-				fails=0
-			elif [ "$fails" -ge "$CFG_MAX_ATTEMPTS" ]; then
+
+				if [ "$CFG_IGNORE_CONFIG_ERROR" != "1" ]; then
+					log error "login rejected by config: $last${hint:+ ($hint)}"
+					log error "service stopped; fix the config and save, or enable ignore_config_error"
+					state_set auth-failed "$last"
+					exit 0
+				fi
+
+				log warn "login rejected by config: $last${hint:+ ($hint)} (ignore_config_error is on)"
+			fi
+
+			if [ "$fails" -ge "$CFG_MAX_ATTEMPTS" ]; then
 				log warn "login failed $fails times, cooling down for ${CFG_COOLDOWN}s"
 				state_set auth-failed "连续失败 ${fails} 次，冷静期 ${CFG_COOLDOWN} 秒后重试"
 				sleep "$CFG_COOLDOWN"
