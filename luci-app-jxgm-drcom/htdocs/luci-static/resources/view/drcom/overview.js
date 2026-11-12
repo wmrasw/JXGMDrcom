@@ -454,7 +454,7 @@ return view.extend({
 
 		o = s.taboption('advanced', form.Flag, 'ignore_config_error',
 			_('配置错误时继续重试'),
-			_('密码错误、账号不存在、未选运营商等错误默认会停止服务；勾选后继续按重试间隔尝试。'));
+			_('勾选后，配置错误不停服，继续重试。'));
 		o.default = '0';
 		o.rmempty = false;
 
