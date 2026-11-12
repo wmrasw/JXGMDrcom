@@ -321,3 +321,6 @@ msgstr "Logout request sent, see the log page for details."
 msgid "退出失败：%s"
 msgstr "Logout failed: %s"
 
+msgid "启动"
+msgstr "Start"
+

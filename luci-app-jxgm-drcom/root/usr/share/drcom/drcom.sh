@@ -447,6 +447,15 @@ do_logout() {
 		return 0
 	fi
 
+	# Already offline: the portal has no session to unbind. Not an error.
+	case "$msg" in
+		*数据为空*|*不在线*|*未在线*)
+			log info "already offline: $msg"
+			state_set offline "已退出登录"
+			return 0
+			;;
+	esac
+
 	log warn "logout rejected: $msg"
 	return 1
 }

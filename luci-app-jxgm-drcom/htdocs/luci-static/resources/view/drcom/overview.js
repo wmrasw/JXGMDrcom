@@ -91,8 +91,14 @@ function runInit(action) {
 		if (res.code != 0)
 			throw new Error(res.stderr || _('命令执行失败（退出码 %d）。').format(res.code));
 
+		var label = {
+			start: _('启动'),
+			restart: _('重启'),
+			stop: _('停止')
+		}[action] || action;
+
 		ui.addNotification(null, E('p',
-			_('操作“%s”完成。').format(action)), 'info');
+			_('操作“%s”完成。').format(label)), 'info');
 	}).catch(function(err) {
 		ui.addNotification(null, E('p', String(err.message || err)), 'danger');
 	});
