@@ -4,6 +4,8 @@
 [![release](https://img.shields.io/github/v/release/wmrasw/JXGMDrcom)](https://github.com/wmrasw/JXGMDrcom/releases)
 [![build](https://github.com/wmrasw/JXGMDrcom/actions/workflows/build.yml/badge.svg)](https://github.com/wmrasw/JXGMDrcom/actions/workflows/build.yml)
 
+**中文** | [English](README.en.md)
+
 江西工业贸易职业技术学院 **Dr.COM 城市热点校园网**的 OpenWrt LuCI 自动登录插件。
 认证走 `curl`（ePortal 网页认证），纯脚本 + 前端包，不编译二进制。
 门户地址、运营商、`v` 参数都可改，但其他使用 Dr.COM ePortal 的学校不一定适用。
@@ -31,6 +33,10 @@
 - **关于浮窗**：页面右上角的 ⓘ 按钮显示名称、版本、许可证、作者与实测信息
 - **手动下线**：服务控制里的「退出登录」先停服务，再向门户发送 unbind 请求，方便换号
 - **配置错误保护**：密码错误、账号不存在时暂停并提示，保存配置后自动恢复
+
+## 界面
+
+![运行状态](screenshots/status.png)
 
 ## 安装
 

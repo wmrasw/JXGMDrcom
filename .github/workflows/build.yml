@@ -2,6 +2,7 @@ name: build
 
 on:
   push:
+    branches: [ main ]
     tags: [ 'v*' ]
   pull_request:
   workflow_dispatch:
@@ -44,6 +45,9 @@ jobs:
   apk:
     name: apk (OpenWrt 25.12 SDK)
     runs-on: ubuntu-latest
+    # Only tags need the heavy SDK job; branch pushes just validate the ipk so
+    # the build badge stays green.
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - uses: actions/checkout@v4
