@@ -622,10 +622,13 @@ return view.extend({
 				'class': 'cbi-button cbi-button-neutral',
 				'title': _('关于插件'),
 				'aria-label': _('关于插件'),
-				'style': 'flex:0 0 auto;box-sizing:border-box;width:2rem;min-width:2rem;'
-					+ 'max-width:2rem;height:2rem;padding:0;margin-top:.35rem;'
+				'style': 'flex:0 0 auto;box-sizing:border-box;'
+					+ 'width:2rem;min-width:2rem;max-width:2rem;'
+					+ 'height:2rem;min-height:2rem;max-height:2rem;'
+					+ 'aspect-ratio:1/1;padding:0;margin-top:.35rem;'
 					+ 'border-radius:50%;display:inline-flex;align-items:center;'
-					+ 'justify-content:center;font:italic 700 1rem/1 Georgia,serif',
+					+ 'justify-content:center;overflow:hidden;'
+					+ 'font:italic 700 1rem Georgia,serif;line-height:1',
 				'click': showAbout
 			}, 'i');
 		}
