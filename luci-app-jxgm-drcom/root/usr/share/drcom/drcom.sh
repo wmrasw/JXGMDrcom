@@ -77,6 +77,29 @@ is_fatal_login_error() {
 	return 1
 }
 
+# procd always respawns the instance (respawn is not "on failure"), so exiting
+# on a config error would just retry every five seconds. Park the loop instead
+# and resume as soon as /etc/config/drcom changes; procd restarts the instance
+# on that change too, whichever comes first.
+config_mtime() {
+	stat -c %Y /etc/config/drcom 2>/dev/null || echo 0
+}
+
+wait_config_change() {
+	local before
+
+	before=$(config_mtime)
+
+	while :; do
+		sleep 5
+
+		if [ "$(config_mtime)" != "$before" ]; then
+			log info "config changed, resuming"
+			return 0
+		fi
+	done
+}
+
 login_error_hint() {
 	case "$1" in
 		*密码错误*)
@@ -548,9 +571,13 @@ do_run() {
 
 				if [ "$CFG_IGNORE_CONFIG_ERROR" != "1" ]; then
 					log error "login rejected by config: $last${hint:+ ($hint)}"
-					log error "service stopped; fix the config and save, or enable ignore_config_error"
-					state_set auth-failed "$last"
-					exit 0
+					log warn "paused; fix the config and save, or enable ignore_config_error"
+					state_set config-error "$last"
+
+					wait_config_change
+					load_config
+					fails=0
+					continue
 				fi
 
 				log warn "login rejected by config: $last${hint:+ ($hint)} (ignore_config_error is on)"

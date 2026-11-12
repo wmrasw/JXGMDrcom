@@ -272,10 +272,13 @@ return view.extend({
 				var run = isRunning(r[0]);
 				var st = parseState(r[1]);
 
+				var paused = run && st.status === 'config-error';
+
 				var badge = document.getElementById('drcom-service-state');
 				if (badge) {
-					badge.className = 'label ' + (run ? 'success' : 'warning');
-					badge.textContent = run ? _('运行中') : _('已停止');
+					badge.className = 'label ' + (run && !paused ? 'success' : 'warning');
+					badge.textContent = paused ? _('已暂停')
+						: (run ? _('运行中') : _('已停止'));
 				}
 
 				var lastResult = document.getElementById('drcom-last-result');
