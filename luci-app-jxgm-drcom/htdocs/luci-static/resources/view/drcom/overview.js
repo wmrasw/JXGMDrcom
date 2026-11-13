@@ -734,8 +734,9 @@ return view.extend({
 				}, _('ePortal is cheap, show me the network.'))
 			]);
 
-			var portalInput = document.getElementById('cbid.drcom.main.portal_url')
-				|| document.querySelector('input[id$=".portal_url"]');
+			// node is not attached to the document yet, so look inside it.
+			var portalInput = node.querySelector('input[id$=".portal_url"]')
+				|| node.querySelector('input[name$=".portal_url"]');
 
 			if (portalInput && portalInput.parentNode) {
 				portalInput.parentNode.appendChild(E('button', {
