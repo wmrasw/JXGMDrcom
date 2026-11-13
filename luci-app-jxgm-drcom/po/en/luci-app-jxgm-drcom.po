@@ -372,12 +372,6 @@ msgstr "Try http://%s:<port>/eportal/portal/login manually; if unsure about the 
 msgid "在线时长"
 msgstr "Online time"
 
-msgid "运行详情"
-msgstr "Details"
-
-msgid "服务状态、在线时长与最近一次认证结果。"
-msgstr "Service state, online time and the latest authentication result."
-
 msgid "连通性检测"
 msgstr "Connectivity check"
 
@@ -389,9 +383,6 @@ msgstr "These options are stored in /etc/config/drcom and apply immediately afte
 
 msgid "启用状态信息"
 msgstr "Enable status info"
-
-msgid "关闭后，本页不再读取门户状态页，在线时长和流量显示为 —。"
-msgstr "When disabled this page no longer reads the portal status page; online time and traffic show —."
 
 msgid "状态地址"
 msgstr "Status URL"
@@ -411,6 +402,18 @@ msgstr "Reachable (HTTP %s)"
 msgid "流量由门户按计费周期更新，可能滞后。"
 msgstr "Traffic is refreshed by the portal on its accounting interval and may lag behind."
 
-msgid "累计流量"
-msgstr "Total traffic"
+msgid "上传流量"
+msgstr "Upload"
+
+msgid "下载流量"
+msgstr "Download"
+
+msgid "最近认证结果"
+msgstr "Latest result"
+
+msgid "详细信息"
+msgstr "Details"
+
+msgid "关闭后，本页不再读取门户状态页，时长和流量显示为 —。"
+msgstr "When disabled this page no longer reads the portal status page; time and traffic show —."
 

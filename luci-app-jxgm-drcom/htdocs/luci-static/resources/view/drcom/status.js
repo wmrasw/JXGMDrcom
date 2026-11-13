@@ -10,8 +10,8 @@
 'require ui';
 
 var STATEFILE = '/var/run/drcom.state';
-var timer = null;
 var SCRIPT = '/usr/share/drcom/drcom.sh';
+var timer = null;
 
 var callServiceList = rpc.declare({
 	object: 'service',
@@ -19,6 +19,24 @@ var callServiceList = rpc.declare({
 	params: [ 'name' ],
 	expect: { 'drcom': {} }
 });
+
+var CSS = [
+	'.drcom-top{margin-bottom:1rem}',
+	'.drcom-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.75rem}',
+	'.drcom-head h3{margin:0;font-size:1.05rem}',
+	'.drcom-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.75rem}',
+	'.drcom-card{background:var(--background-color-high,rgba(127,127,127,.08));',
+	'border:1px solid rgba(127,127,127,.16);border-radius:.6rem;padding:.8rem 1rem;min-width:0}',
+	'.drcom-card .k{font-size:.8rem;color:var(--muted-text,#8898aa)}',
+	'.drcom-card .v{font-size:1.45rem;font-weight:600;margin-top:.2rem;word-break:break-all}',
+	'.drcom-panel{background:var(--background-color-high,rgba(127,127,127,.08));',
+	'border:1px solid rgba(127,127,127,.16);border-radius:.6rem;padding:.9rem 1rem;margin-top:.75rem}',
+	'.drcom-panel h4{margin:0 0 .5rem;font-size:.95rem}',
+	'.drcom-row{display:flex;gap:.75rem;padding:.2rem 0;font-size:.9rem}',
+	'.drcom-row .k{flex:0 0 7rem;color:var(--muted-text,#8898aa)}',
+	'.drcom-row .v{min-width:0;word-break:break-all}',
+	'.drcom-note{font-size:.8rem;color:var(--muted-text,#8898aa);margin-top:.5rem}'
+].join('');
 
 function isRunning(entry) {
 	var instances = (entry && entry.instances) || {};
@@ -89,6 +107,20 @@ function fmtTime(ts) {
 		+ ' ' + [ pad2(d.getHours()), pad2(d.getMinutes()), pad2(d.getSeconds()) ].join(':');
 }
 
+function card(id, label, value) {
+	return E('div', { 'class': 'drcom-card' }, [
+		E('div', { 'class': 'k' }, label),
+		E('div', { 'class': 'v', 'id': id }, value)
+	]);
+}
+
+function row(id, label, value) {
+	return E('div', { 'class': 'drcom-row' }, [
+		E('span', { 'class': 'k' }, label),
+		E('span', { 'class': 'v', 'id': id }, value)
+	]);
+}
+
 return view.extend({
 	load: function() {
 		return uci.load('drcom').then(function() {
@@ -102,122 +134,82 @@ return view.extend({
 	render: function(res) {
 		var running = isRunning(res[0]);
 		var state = parseState(res[1]);
+		var portal = uci.get('drcom', 'main', 'portal_url') || '';
+		var iface = uci.get('drcom', 'main', 'iface') || 'wan';
 
-		var info = {
-			state: running ? _('运行中') : _('已停止'),
-			cls: running ? 'success' : 'warning',
-			iface: uci.get('drcom', 'main', 'iface') || 'wan',
-			ip: '—',
-			mac: '—',
-			session: '—',
-			traffic: '—',
-			last: fmtTime(state.last_login),
-			result: state.message || '—',
-			portal: uci.get('drcom', 'main', 'portal_url') || '—',
-			probe: '—'
-		};
-
-		function cell(id) {
-			return '<span id="%s">%s</span>'.format(id, escapeHtml(info[id.replace('drcom-st-', '')]));
-		}
+		var top = E('div', { 'class': 'drcom-top' }, [
+			E('div', { 'class': 'drcom-head' }, [
+				E('h3', {}, _('运行状态')),
+				E('span', {
+					'class': 'label ' + (running ? 'success' : 'warning'),
+					'id': 'drcom-r-state'
+				}, running ? _('运行中') : _('已停止'))
+			]),
+			E('div', { 'class': 'drcom-cards' }, [
+				card('drcom-r-uptime', _('在线时长'), '—'),
+				card('drcom-r-ip', _('上行 IP'), '—'),
+				card('drcom-r-up', _('上传流量'), '—'),
+				card('drcom-r-down', _('下载流量'), '—')
+			]),
+			E('div', { 'class': 'drcom-note' },
+				_('流量由门户按计费周期更新，可能滞后。')),
+			E('div', { 'class': 'drcom-panel' }, [
+				E('h4', {}, _('最近认证结果')),
+				E('div', { 'class': 'v', 'id': 'drcom-r-result' }, state.message || '—'),
+				E('div', { 'class': 'drcom-row' }, [
+					E('span', { 'class': 'k' }, _('上次登录')),
+					E('span', { 'class': 'v', 'id': 'drcom-r-last' }, fmtTime(state.last_login))
+				])
+			]),
+			E('div', { 'class': 'drcom-panel' }, [
+				E('h4', {}, _('详细信息')),
+				row('drcom-r-iface', _('上行接口'), iface),
+				row('drcom-r-mac', _('上行端口 MAC'), '—'),
+				E('div', { 'class': 'drcom-row' }, [
+					E('span', { 'class': 'k' }, _('门户登录地址')),
+					E('span', { 'class': 'v', 'id': 'drcom-r-portal' },
+						portal || '—')
+				]),
+				row('drcom-r-probe', _('连通性检测'), '—')
+			])
+		]);
 
 		var m = new form.Map('drcom');
 
-		var s1 = m.section(form.TypedSection, 'drcom', _('运行详情'),
-			_('服务状态、在线时长与最近一次认证结果。'));
-		s1.anonymous = true;
-
-		var o = s1.option(form.DummyValue, '_state', _('服务状态'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() {
-			return '<span id="drcom-st-state" class="label %s">%s</span>'
-				.format(info.cls, escapeHtml(info.state));
-		};
-
-		o = s1.option(form.DummyValue, '_iface', _('上行接口'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-iface'); };
-
-		o = s1.option(form.DummyValue, '_ip', _('上行 IP'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-ip'); };
-
-		o = s1.option(form.DummyValue, '_mac', _('上行端口 MAC'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-mac'); };
-
-		o = s1.option(form.DummyValue, '_session', _('在线时长'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-session'); };
-
-		o = s1.option(form.DummyValue, '_traffic', _('累计流量'),
-			_('流量由门户按计费周期更新，可能滞后。'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-traffic'); };
-
-		o = s1.option(form.DummyValue, '_last', _('上次登录'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-last'); };
-
-		o = s1.option(form.DummyValue, '_result', _('最近结果'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-result'); };
-
-		o = s1.option(form.DummyValue, '_portal', _('门户登录地址'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-portal'); };
-
-		o = s1.option(form.DummyValue, '_probe', _('连通性检测'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() { return cell('drcom-st-probe'); };
-
-		var s2 = m.section(form.TypedSection, 'drcom', _('状态页设置'),
+		var s = m.section(form.TypedSection, 'drcom', _('状态页设置'),
 			_('这些选项保存在 /etc/config/drcom，保存后立即生效。'));
-		s2.anonymous = true;
+		s.anonymous = true;
 
-		o = s2.option(form.Flag, 'status_enabled', _('启用状态信息'),
-			_('关闭后，本页不再读取门户状态页，在线时长和流量显示为 —。'));
+		var o = s.option(form.Flag, 'status_enabled', _('启用状态信息'),
+			_('关闭后，本页不再读取门户状态页，时长和流量显示为 —。'));
 		o.default = '1';
 		o.rmempty = false;
 		o.onchange = function() {
 			window.setTimeout(refreshAll, 500);
 		};
 
-		o = s2.option(form.Value, 'status_url', _('状态地址'),
+		o = s.option(form.Value, 'status_url', _('状态地址'),
 			_('留空则使用门户主机的 9002 端口。'));
 		o.placeholder = 'http://10.100.100.30:9002/';
 		o.rmempty = true;
 
-		o = s2.option(form.Value, 'status_interval', _('刷新间隔'),
+		o = s.option(form.Value, 'status_interval', _('刷新间隔'),
 			_('本页刷新这些信息的秒数。'));
 		o.datatype = 'uinteger';
 		o.placeholder = '30';
 		o.rmempty = true;
 
-		function put(id, text, cls) {
+		function put(id, text) {
 			var el = document.getElementById(id);
 
-			if (!el)
-				return;
-
-			el.textContent = text;
-
-			if (cls)
-				el.className = 'label ' + cls;
+			if (el)
+				el.textContent = text;
 		}
 
 		function refreshAll() {
 			var enabled = uci.get('drcom', 'main', 'status_enabled');
+			var checkUrl = uci.get('drcom', 'main', 'check_url')
+				|| 'http://connect.rom.miui.com/generate_204';
 
 			return Promise.all([
 				L.resolveDefault(callServiceList('drcom'), {}),
@@ -227,7 +219,7 @@ return view.extend({
 				(enabled == '0'
 					? Promise.resolve('')
 					: L.resolveDefault(fs.exec(SCRIPT, [ 'session' ]), '')),
-				L.resolveDefault(fs.exec(SCRIPT, [ 'probe', uci.get('drcom', 'main', 'check_url') || 'http://connect.rom.miui.com/generate_204' ]), '')
+				L.resolveDefault(fs.exec(SCRIPT, [ 'probe', checkUrl ]), '')
 			]).then(function(r) {
 				var run = isRunning(r[0]);
 				var st = parseState(r[1]);
@@ -236,31 +228,33 @@ return view.extend({
 				var ses = String((r[4] && r[4].stdout) || '').trim().split(/\s+/);
 				var code = String((r[5] && r[5].stdout) || '').trim();
 
-				put('drcom-st-state', run ? _('运行中') : _('已停止'),
-					run ? 'success' : 'warning');
-				put('drcom-st-ip', ip || '—');
-				put('drcom-st-mac', mac || '—');
-				put('drcom-st-last', fmtTime(st.last_login));
-				put('drcom-st-result', st.message || '—');
-
-				if (ses.length >= 3 && /^[0-9]+$/.test(ses[0])) {
-					put('drcom-st-session', fmtDuration(+ses[0]));
-					put('drcom-st-traffic',
-						'↑' + fmtTraffic(+ses[1]) + '  ↓' + fmtTraffic(+ses[2]));
-				}
-				else {
-					put('drcom-st-session', '—');
-					put('drcom-st-traffic', '—');
+				var badge = document.getElementById('drcom-r-state');
+				if (badge) {
+					badge.className = 'label ' + (run ? 'success' : 'warning');
+					badge.textContent = run ? _('运行中') : _('已停止');
 				}
 
-				put('drcom-st-probe', code == '204' || code == '200'
+				put('drcom-r-ip', ip || '—');
+				put('drcom-r-mac', mac || '—');
+				put('drcom-r-last', fmtTime(st.last_login));
+				put('drcom-r-result', st.message || '—');
+				put('drcom-r-probe', code == '204' || code == '200'
 					? _('可用（HTTP %s）').format(code)
 					: _('不可用（%s）').format(code || '000'));
+
+				if (ses.length >= 3 && /^[0-9]+$/.test(ses[0])) {
+					put('drcom-r-uptime', fmtDuration(+ses[0]));
+					put('drcom-r-up', fmtTraffic(+ses[1]));
+					put('drcom-r-down', fmtTraffic(+ses[2]));
+				}
+				else {
+					put('drcom-r-uptime', '—');
+					put('drcom-r-up', '—');
+					put('drcom-r-down', '—');
+				}
 			});
 		}
 
-		// Re-read the interval every round so a saved change applies without
-		// reloading the page.
 		function nextDelay() {
 			var v = +uci.get('drcom', 'main', 'status_interval');
 
@@ -280,6 +274,12 @@ return view.extend({
 
 		window.setTimeout(loop, 300);
 
-		return m.render();
+		return m.render().then(function(node) {
+			return E([
+				E('style', {}, CSS),
+				top,
+				node
+			]);
+		});
 	}
 });
