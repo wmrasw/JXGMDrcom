@@ -596,14 +596,30 @@ return view.extend({
 			}).then(function(res) {
 				var lines = String((res && res.stdout) || '')
 					.split(/\r?\n/)
-					.map(function(s) { return s.trim(); })
-					.filter(function(s) { return /^https?:\/\//.test(s); });
+					.map(function(s) { return s.trim(); });
 
-				var url = lines.length ? lines[lines.length - 1] : '';
+				var url = lines.filter(function(l) {
+					return /^https?:\/\//.test(l);
+				}).pop() || '';
+
+				var host = (lines.filter(function(l) {
+					return /^host=/.test(l);
+				}).pop() || '').replace(/^host=/, '');
 
 				if (!url) {
-					ui.addNotification(null, E('p', {},
-						_('未探测到门户（可能已在线，或不是拦截式门户）。')), 'warning');
+					if (host) {
+						ui.showModal(_('探测结果'), [
+							E('p', {}, _('找到门户主机 %s，但探测的几个端口都没有响应 ePortal。').format(host)),
+							E('p', { 'style': 'color:var(--muted-text,#8898aa)' },
+								_('可以手动试 http://%s:端口/eportal/portal/login，端口向网络中心确认或抓包查看。').format(host)),
+							E('div', { 'class': 'right', 'style': 'margin-top:1rem' },
+								E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('关闭')))
+						]);
+					}
+					else {
+						ui.addNotification(null, E('p', {},
+							_('未探测到门户（可能已在线，或不是拦截式门户）。')), 'warning');
+					}
 
 					return;
 				}

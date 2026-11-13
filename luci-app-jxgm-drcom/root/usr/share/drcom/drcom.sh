@@ -595,8 +595,9 @@ do_discover() {
 	done
 
 	[ -n "$result" ] || {
-		logq warn "discover: no ePortal on $host"
-		return 1
+		logq warn "discover: host $host found, but no ePortal on ports 801/80/8080/8081/8000/8090"
+		printf 'host=%s\n' "$host"
+		return 2
 	}
 
 	printf '%s\n' "$result"
