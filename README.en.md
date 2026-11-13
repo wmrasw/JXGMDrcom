@@ -129,6 +129,9 @@ python tools/mkipk.py
 | `v_random` | `0` | Send a random 4-digit `v` on every login |
 | `user_agent` | empty | Empty uses curl's default UA (shown in the placeholder) |
 | `ignore_config_error` | `0` | Keep retrying on configuration errors (default: pause, resume after saving) |
+| `status_enabled` | `1` | Whether the status page reads the portal status page; off shows `—` |
+| `status_url` | empty | Status page URL; empty uses port 9002 on the portal host |
+| `status_interval` | `30` | Status page refresh interval in seconds |
 | `log_level` | `info` | error / warn / info / debug |
 
 ## Command line

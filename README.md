@@ -113,6 +113,9 @@ python tools/mkipk.py
 | `v_random` | `0` | 勾选后每次登录随机生成四位 `v` |
 | `user_agent` | 空 | 留空用 curl 默认 UA（页面提示里显示），填写则覆盖 |
 | `ignore_config_error` | `0` | 配置错误时继续重试（默认暂停，保存配置后恢复） |
+| `status_enabled` | `1` | 状态页是否读取门户状态页；关闭后时长/流量显示 `—` |
+| `status_url` | 空 | 状态页地址；留空用门户主机的 9002 端口 |
+| `status_interval` | `30` | 状态页刷新间隔（秒） |
 | `log_level` | `info` | error / warn / info / debug |
 
 ## 命令行
