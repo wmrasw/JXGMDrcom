@@ -194,6 +194,7 @@ rm -f /etc/config/drcom             # 需要一并清除配置时
 JXGMDrcom/
 ├── LICENSE                  # Apache License 2.0 全文
 ├── NOTICE                   # 版权与商标声明
+├── LICENSES/                # 两份许可证全文（代码 Apache-2.0，文档 CC BY-SA 4.0）
 ├── CHANGELOG.md             # 版本变更记录
 ├── tools/
 │   ├── mkdeploy.py          # 生成手工部署用的 tar.gz
@@ -238,11 +239,14 @@ JXGMDrcom/
 - 配置变更后 procd 自动重启实例
 - 「退出登录」能解绑（门户返回 `解绑终端MAC成功!`）
 - 被判定共享时日志给出剩余秒数
+- 状态页能读到在线时长与上下行流量（流量按门户计费周期更新）
 
 ## 已知限制
 
 - 手工部署的文件不在包管理器数据库里，刷固件后需要重新安装；
-- 认证协议随学校门户版本变化，门户升级后可能需要调整请求参数。
+- 认证协议随学校门户版本变化，门户升级后可能需要调整请求参数；
+- 状态页的流量数据由门户按计费周期汇总，可能滞后几分钟；
+- 门户地址探测只在未登录（被拦截）时有效。
 
 ## 变更记录
 
@@ -250,7 +254,8 @@ JXGMDrcom/
 
 ## 许可
 
-本项目以 [Apache License 2.0](LICENSE) 发布，同时附带 [NOTICE](NOTICE) 文件。
+- **代码**（`luci-app-jxgm-drcom/`、`tools/`、`.github/`）以 [Apache License 2.0](LICENSE) 发布，附带 [NOTICE](NOTICE)；
+- **文档与截图**（`README.md`、`README.en.md`、`CHANGELOG.md`、`screenshots/`）以 [CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt) 发布。
 
 - 这是一个**非官方**插件，与广州热点软件科技股份有限公司、以及任何学校的图文信息中心均无关联；
 - “Dr.COM”“ePortal”等名称仅用于说明兼容性，相关商标归其所有者；

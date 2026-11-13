@@ -208,6 +208,7 @@ rm -f /etc/config/drcom             # also remove the configuration
 JXGMDrcom/
 ├── LICENSE                  # Apache License 2.0
 ├── NOTICE                   # copyright and trademark notice
+├── LICENSES/                # both license texts (code Apache-2.0, docs CC BY-SA 4.0)
 ├── CHANGELOG.md
 ├── screenshots/
 ├── tools/
@@ -251,13 +252,17 @@ Verified on Kwrt 25.12-SNAPSHOT (kernel 6.12):
 - procd restarts the instance when the configuration changes
 - **Log out** unbinds the terminal (`解绑终端MAC成功!`)
 - the sharing-detection message reports the remaining seconds in the log
+- the status page reads online time and traffic (traffic follows the portal's accounting interval)
 
 ## Known limitations
 
 - files deployed by hand are not in the package database and disappear on a
   firmware upgrade;
 - the portal protocol may change with a school-side upgrade, in which case the
-  request parameters need adjusting.
+  request parameters need adjusting;
+- traffic figures on the status page are aggregated by the portal and may lag a
+  few minutes;
+- portal detection only works while logged out (behind the captive portal).
 
 ## Changelog
 
@@ -265,7 +270,10 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-Released under the [Apache License 2.0](LICENSE), with a [NOTICE](NOTICE) file.
+- **Code** (`luci-app-jxgm-drcom/`, `tools/`, `.github/`) is released under the
+  [Apache License 2.0](LICENSE), with a [NOTICE](NOTICE) file;
+- **Documentation and screenshots** (`README.md`, `README.en.md`, `CHANGELOG.md`,
+  `screenshots/`) are released under [CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt).
 
 - This is an **unofficial** plugin, not affiliated with Guangzhou Hotspot Software
   Technology Co., Ltd. or any school IT center;
