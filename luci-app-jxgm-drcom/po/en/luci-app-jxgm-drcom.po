@@ -231,8 +231,8 @@ msgstr "Random v per login"
 msgid "勾选后忽略上面填写的值，每次登录发送随机四位数。"
 msgstr "Ignore the value above and send a random 4-digit number on each login."
 
-msgid "留空则使用默认 UA。HTTP(S) 重写代理插件可能会改写这个请求头。"
-msgstr "Leave empty to use the default UA. HTTP(S) rewriting proxies may modify this header."
+msgid "留空则使用默认 UA。（HTTP(S) 重写代理插件可能改写该请求头。）"
+msgstr "Leave empty to use the default UA. (HTTP(S) rewriting proxies may alter this header.)"
 
 msgid "使用真实 MAC 地址"
 msgstr "Send real MAC"
