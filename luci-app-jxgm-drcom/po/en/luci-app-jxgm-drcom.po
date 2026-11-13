@@ -408,3 +408,6 @@ msgstr "Seconds between refreshes of this page."
 msgid "可用（HTTP %s）"
 msgstr "Reachable (HTTP %s)"
 
+msgid "流量由门户按计费周期更新，可能滞后。"
+msgstr "Traffic is refreshed by the portal on its accounting interval and may lag behind."
+

@@ -147,7 +147,8 @@ return view.extend({
 		o.optional = true;
 		o.cfgvalue = function() { return cell('drcom-st-mac'); };
 
-		o = s1.option(form.DummyValue, '_session', _('在线时长'));
+		o = s1.option(form.DummyValue, '_session', _('在线时长'),
+			_('流量由门户按计费周期更新，可能滞后。'));
 		o.rawhtml = true;
 		o.optional = true;
 		o.cfgvalue = function() { return cell('drcom-st-session'); };

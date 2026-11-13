@@ -80,32 +80,6 @@ function escapeHtml(s) {
 		.replace(/"/g, '&quot;');
 }
 
-function pad2(n) {
-	return ('0' + n).slice(-2);
-}
-
-function fmtDuration(sec) {
-	var d = Math.floor(sec / 86400);
-	var h = Math.floor(sec / 3600) % 24;
-	var m = Math.floor(sec / 60) % 60;
-	var s = sec % 60;
-
-	if (d > 0)
-		return d + 'd ' + pad2(h) + ':' + pad2(m);
-
-	return pad2(h) + ':' + pad2(m) + ':' + pad2(s);
-}
-
-function fmtTraffic(kb) {
-	if (kb >= 1048576)
-		return (kb / 1048576).toFixed(1) + ' GB';
-
-	if (kb >= 1024)
-		return (kb / 1024).toFixed(1) + ' MB';
-
-	return kb + ' KB';
-}
-
 function badgeState(running, st) {
 	var paused = running && st && st.status === 'config-error';
 
@@ -144,7 +118,6 @@ function runInit(action) {
 var probeState = { text: '—' };
 var macState = { text: '' };
 var ipState = { text: '—' };
-var sessionState = { text: '—' };
 var probeSeq = 0;
 var probeTimer = null;
 
@@ -302,27 +275,6 @@ return view.extend({
 
 		var m, s, o;
 
-		function refreshSession() {
-			return fs.exec(SCRIPT, [ 'session' ]).then(function(res) {
-				var parts = String((res && res.stdout) || '').trim().split(/\s+/);
-
-				if (parts.length < 3 || !/^[0-9]+$/.test(parts[0])) {
-					sessionState.text = '—';
-				}
-				else {
-					sessionState.text = fmtDuration(+parts[0])
-						+ ' · ↑' + fmtTraffic(+parts[1])
-						+ ' ↓' + fmtTraffic(+parts[2]);
-				}
-
-				var el = document.getElementById('drcom-session');
-				if (el)
-					el.textContent = sessionState.text;
-			}).catch(function() {
-				sessionState.text = '—';
-			});
-		}
-
 		function refreshStatus() {
 			return Promise.all([
 				L.resolveDefault(callServiceList('drcom'), {}),
@@ -376,13 +328,6 @@ return view.extend({
 		o.optional = true;
 		o.cfgvalue = function() {
 			return '<span id="drcom-uplink-ip">%s</span>'.format(escapeHtml(ipState.text));
-		};
-
-		o = s.option(form.DummyValue, '_session', _('在线时长'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() {
-			return '<span id="drcom-session">%s</span>'.format(escapeHtml(sessionState.text));
 		};
 
 		o = s.option(form.DummyValue, '_last_result', _('最近结果'));
@@ -557,7 +502,6 @@ return view.extend({
 
 		poll.add(refreshStatus, 5);
 		poll.add(refreshUplinkIp, 30);
-		poll.add(refreshSession, 30);
 
 		function runSetMac() {
 			var input = document.getElementById('drcom-mac-input');
@@ -789,7 +733,6 @@ return view.extend({
 
 			window.setTimeout(refreshRealMac, 300);
 			window.setTimeout(refreshUplinkIp, 300);
-			window.setTimeout(refreshSession, 500);
 
 			var titleEl = E('h2', {}, _('JXGM DrCOM'));
 
