@@ -194,7 +194,7 @@ rm -f /etc/config/drcom             # 需要一并清除配置时
 JXGMDrcom/
 ├── LICENSE                  # Apache License 2.0 全文
 ├── NOTICE                   # 版权与商标声明
-├── LICENSES/                # 两份许可证全文（代码 Apache-2.0，文档 CC BY-SA 4.0）
+├── LICENSES/                # 两份许可证全文（代码 Apache-2.0，文档 CC BY 4.0）
 ├── CHANGELOG.md             # 版本变更记录
 ├── tools/
 │   ├── mkdeploy.py          # 生成手工部署用的 tar.gz
@@ -255,7 +255,7 @@ JXGMDrcom/
 ## 许可
 
 - **代码**（`luci-app-jxgm-drcom/`、`tools/`、`.github/`）以 [Apache License 2.0](LICENSE) 发布，附带 [NOTICE](NOTICE)；
-- **文档与截图**（`README.md`、`README.en.md`、`CHANGELOG.md`、`screenshots/`）以 [CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt) 发布。
+- **文档与截图**（`README.md`、`README.en.md`、`CHANGELOG.md`、`screenshots/`）以 [CC BY 4.0](LICENSES/CC-BY-4.0.txt) 发布。
 
 - 这是一个**非官方**插件，与广州热点软件科技股份有限公司、以及任何学校的图文信息中心均无关联；
 - “Dr.COM”“ePortal”等名称仅用于说明兼容性，相关商标归其所有者；

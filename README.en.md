@@ -208,7 +208,7 @@ rm -f /etc/config/drcom             # also remove the configuration
 JXGMDrcom/
 ├── LICENSE                  # Apache License 2.0
 ├── NOTICE                   # copyright and trademark notice
-├── LICENSES/                # both license texts (code Apache-2.0, docs CC BY-SA 4.0)
+├── LICENSES/                # both license texts (code Apache-2.0, docs CC BY 4.0)
 ├── CHANGELOG.md
 ├── screenshots/
 ├── tools/
@@ -273,7 +273,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 - **Code** (`luci-app-jxgm-drcom/`, `tools/`, `.github/`) is released under the
   [Apache License 2.0](LICENSE), with a [NOTICE](NOTICE) file;
 - **Documentation and screenshots** (`README.md`, `README.en.md`, `CHANGELOG.md`,
-  `screenshots/`) are released under [CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt).
+  `screenshots/`) are released under [CC BY 4.0](LICENSES/CC-BY-4.0.txt).
 
 - This is an **unofficial** plugin, not affiliated with Guangzhou Hotspot Software
   Technology Co., Ltd. or any school IT center;
