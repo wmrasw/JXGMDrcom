@@ -528,7 +528,7 @@ do_logout() {
 # redirects (already online) try once more following redirects and look for an
 # ePortal URL in the body, which covers portals that redirect via JavaScript.
 do_discover() {
-	local url headers body loc origin found result port
+	local url headers body loc host port result code
 
 	load_config
 
@@ -543,97 +543,65 @@ do_discover() {
 	loc=$(printf '%s' "$headers" | tr -d '\r' |
 		sed -n 's/^[Ll]ocation:[[:space:]]*//p' | head -n 1)
 
-	[ -n "$loc" ] && logq info "discover: redirect -> $loc"
-
-	# No redirect at all: online already, or the portal uses a JS redirect.
 	if [ -z "$loc" ]; then
-		body=$(curl -s -L \
-			--connect-timeout "$CFG_CONNECT_TIMEOUT" \
-			--max-time $((CFG_CONNECT_TIMEOUT * 3)) "$url" 2>/dev/null)
-
-		loc=$(printf '%s' "$body" | tr -d '\r' |
-			grep -aoiE 'https?://[^"'"'"' <>]*eportal[^"'"'"' <>]*' |
-			head -n 1)
-
-		if [ -z "$loc" ]; then
-			logq warn "discover: no redirect, probably already online"
-			return 1
-		fi
-
-		logq info "discover: found in body -> $loc"
+		logq warn "discover: no redirect, probably already online"
+		return 1
 	fi
+
+	logq info "discover: redirect -> $loc"
 
 	case "$loc" in
 		http://*|https://*) ;;
 		*) loc="http://$loc" ;;
 	esac
 
-	# Most campuses redirect to a landing page (a79.htm and friends) that in
-	# turn points at the ePortal; fetch it and look for the real endpoint.
-	case "$loc" in
-		*eportal*) ;;
-		*)
-			body=$(curl -s -L \
-				--connect-timeout "$CFG_CONNECT_TIMEOUT" \
-				--max-time $((CFG_CONNECT_TIMEOUT * 3)) "$loc" 2>/dev/null)
+	# Most campuses redirect to a landing page that carries the portal address
+	# in JS variables (v4serip / ss6) rather than a ready-made ePortal URL.
+	body=$(curl -s -L \
+		--connect-timeout "$CFG_CONNECT_TIMEOUT" \
+		--max-time $((CFG_CONNECT_TIMEOUT * 3)) "$loc" 2>/dev/null)
 
-			# Some portals write the URL as a JS string with escaped slashes.
-			body=$(printf '%s' "$body" | tr -d '\r' | sed 's#\\/#/#g')
+	body=$(printf '%s' "$body" | tr -d '\r' | sed 's#\\/#/#g')
+	logq debug "discover: landing page: $(printf '%s' "$body" | head -c 300)"
 
-			logq debug "discover: landing page: $(printf '%s' "$body" | head -c 300)"
+	host=$(printf '%s' "$body" |
+		sed -n "s/.*v4serip=['\"]\([0-9.]\{7,\}\)['\"].*/\1/p" | head -n 1)
 
-			found=$(printf '%s' "$body" |
-				grep -aoiE 'https?://[^"'"'"' <>]*eportal[^"'"'"' <>]*' |
-				head -n 1)
+	[ -n "$host" ] || host=$(printf '%s' "$body" |
+		sed -n 's/.*ss6="\([0-9.]\{7,\}\)".*/\1/p' | head -n 1)
 
-			if [ -n "$found" ]; then
-				logq info "discover: landing page points to $found"
-				loc=$found
-			else
-				found=$(printf '%s' "$body" |
-					grep -aoiE '/[a-z0-9_./-]*eportal[a-z0-9_./?=&-]*' |
-					head -n 1)
+	[ -n "$host" ] || host=$(printf '%s' "$loc" |
+		sed -n 's#^https\?://\([^/:]*\).*#\1#p')
 
-				if [ -n "$found" ]; then
-					origin=$(printf '%s' "$loc" |
-						sed -n 's#^\(https\?://[^/]*\).*#\1#p')
+	[ -n "$host" ] || {
+		logq warn "discover: cannot find the portal host on $loc"
+		return 1
+	}
 
-					# The landing page may live on another port than the portal.
-					case "$origin" in
-						*:[0-9]*) ;;
-						*)
-							port=$(printf '%s' "$body" |
-								grep -aoE ':[0-9]{2,5}/eportal' |
-								head -n 1 | cut -d/ -f1)
+	logq info "discover: portal host $host, probing ports"
 
-							[ -n "$port" ] && origin="${origin}${port}"
-							;;
-					esac
+	for port in 801 80 8080 8081 8000 8090; do
+		code=$(curl -s -o /dev/null -w '%{http_code}' \
+			--connect-timeout 2 --max-time 3 \
+			"http://${host}:${port}/eportal/" 2>/dev/null)
 
-					loc="${origin}${found}"
-					logq info "discover: landing page points to $loc"
-				else
-					logq warn "discover: no ePortal endpoint on $loc"
-					return 1
-				fi
-			fi
-			;;
-	esac
+		case "$code" in
+			000|404) continue ;;
+		esac
 
-	case "$loc" in
-		*/eportal/portal/login*)
-			result=${loc%%\?*}
-			;;
-		*)
-			result="${loc%%/eportal*}/eportal/portal/login"
-			;;
-	esac
+		logq info "discover: http://${host}:${port}/eportal/ -> HTTP $code"
+		result="http://${host}:${port}/eportal/portal/login"
+		break
+	done
+
+	[ -n "$result" ] || {
+		logq warn "discover: no ePortal on $host"
+		return 1
+	}
 
 	printf '%s\n' "$result"
 	logq info "discover: portal login at $result"
 }
-
-
 do_run() {
 	load_config
 
