@@ -110,6 +110,7 @@ return view.extend({
 			ip: '—',
 			mac: '—',
 			session: '—',
+			traffic: '—',
 			last: fmtTime(state.last_login),
 			result: state.message || '—',
 			portal: uci.get('drcom', 'main', 'portal_url') || '—',
@@ -149,11 +150,16 @@ return view.extend({
 		o.optional = true;
 		o.cfgvalue = function() { return cell('drcom-st-mac'); };
 
-		o = s1.option(form.DummyValue, '_session', _('在线时长'),
-			_('流量由门户按计费周期更新，可能滞后。'));
+		o = s1.option(form.DummyValue, '_session', _('在线时长'));
 		o.rawhtml = true;
 		o.optional = true;
 		o.cfgvalue = function() { return cell('drcom-st-session'); };
+
+		o = s1.option(form.DummyValue, '_traffic', _('累计流量'),
+			_('流量由门户按计费周期更新，可能滞后。'));
+		o.rawhtml = true;
+		o.optional = true;
+		o.cfgvalue = function() { return cell('drcom-st-traffic'); };
 
 		o = s1.option(form.DummyValue, '_last', _('上次登录'));
 		o.rawhtml = true;
@@ -237,12 +243,15 @@ return view.extend({
 				put('drcom-st-last', fmtTime(st.last_login));
 				put('drcom-st-result', st.message || '—');
 
-				if (ses.length >= 3 && /^[0-9]+$/.test(ses[0]))
-					put('drcom-st-session', fmtDuration(+ses[0])
-						+ ' · ↑' + fmtTraffic(+ses[1])
-						+ ' ↓' + fmtTraffic(+ses[2]));
-				else
+				if (ses.length >= 3 && /^[0-9]+$/.test(ses[0])) {
+					put('drcom-st-session', fmtDuration(+ses[0]));
+					put('drcom-st-traffic',
+						'↑' + fmtTraffic(+ses[1]) + '  ↓' + fmtTraffic(+ses[2]));
+				}
+				else {
 					put('drcom-st-session', '—');
+					put('drcom-st-traffic', '—');
+				}
 
 				put('drcom-st-probe', code == '204' || code == '200'
 					? _('可用（HTTP %s）').format(code)
