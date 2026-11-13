@@ -396,15 +396,6 @@ return view.extend({
 		o.placeholder = 'http://10.100.100.30:801/eportal/portal/login';
 		o.rmempty = true;
 
-		o = s.taboption('portal', form.DummyValue, '_discover', _('自动探测'),
-			_('先停止服务（保持未登录）再点按钮，从未联网时的跳转里推断门户地址。'));
-		o.rawhtml = true;
-		o.optional = true;
-		o.cfgvalue = function() {
-			return '<button type="button" class="cbi-button cbi-button-neutral" data-drcom-discover="1">%s</button>'
-				.format(_('探测门户地址'));
-		};
-
 		o = s.taboption('portal', form.Value, 'check_url', _('连通性检测地址'),
 			_('返回 HTTP 204 即视为外网在线。'));
 		o.placeholder = 'http://connect.rom.miui.com/generate_204';
@@ -570,10 +561,39 @@ return view.extend({
 			]);
 		}
 
+		function confirmDiscover() {
+			ui.showModal(_('尝试探测门户'), [
+				E('p', {}, _('默认地址不可用时使用。会先停止服务；若当前在线，会先发送注销，再从拦截跳转里推测门户登录地址。探测不一定成功。')),
+				E('div', { 'class': 'right', 'style': 'margin-top:1rem' }, [
+					E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('取消')),
+					' ',
+					E('button', {
+						'class': 'cbi-button cbi-button-action',
+						'click': function() {
+							ui.hideModal();
+							runDiscover();
+						}
+					}, _('继续'))
+				])
+			]);
+		}
+
 		function runDiscover() {
 			ui.addNotification(null, E('p', {}, _('正在探测…')), 'info');
 
-			return fs.exec(SCRIPT, [ 'discover' ]).then(function(res) {
+			return runInit('stop').then(function() {
+				return fs.exec(SCRIPT, [ 'check' ]);
+			}).then(function(res) {
+				if (res && res.code === 0) {
+					return fs.exec(SCRIPT, [ 'logout' ]).then(function() {
+						return new Promise(function(resolve) {
+							window.setTimeout(resolve, 1500);
+						});
+					});
+				}
+			}).then(function() {
+				return fs.exec(SCRIPT, [ 'discover' ]);
+			}).then(function(res) {
 				var url = String((res && res.stdout) || '').trim();
 
 				if (!url) {
@@ -606,7 +626,7 @@ return view.extend({
 
 			if (disco) {
 				ev.preventDefault();
-				runDiscover();
+				confirmDiscover();
 				return;
 			}
 
@@ -713,6 +733,18 @@ return view.extend({
 					'style': 'color: var(--muted-text, #8898aa)'
 				}, _('ePortal is cheap, show me the network.'))
 			]);
+
+			var portalInput = document.getElementById('cbid.drcom.main.portal_url')
+				|| document.querySelector('input[id$=".portal_url"]');
+
+			if (portalInput && portalInput.parentNode) {
+				portalInput.parentNode.appendChild(E('button', {
+					'type': 'button',
+					'class': 'cbi-button cbi-button-neutral',
+					'data-drcom-discover': '1',
+					'style': 'margin-left:.5rem'
+				}, _('尝试探测')));
+			}
 
 			return E([
 				E('div', {

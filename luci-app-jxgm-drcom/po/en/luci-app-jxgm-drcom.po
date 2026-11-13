@@ -336,15 +336,6 @@ msgstr "Paused"
 msgid "插件开发、适配等"
 msgstr "plugin development and adaptation"
 
-msgid "自动探测"
-msgstr "Auto-detect"
-
-msgid "先停止服务（保持未登录）再点按钮，从未联网时的跳转里推断门户地址。"
-msgstr "Stop the service first (stay logged out), then the button derives the portal URL from the captive portal redirect."
-
-msgid "探测门户地址"
-msgstr "Detect portal URL"
-
 msgid "正在探测…"
 msgstr "Detecting…"
 
@@ -353,4 +344,13 @@ msgstr "No portal detected (already online, or not a captive portal)."
 
 msgid "已填入 %s，保存后生效。"
 msgstr "Filled in %s; save to apply."
+
+msgid "尝试探测"
+msgstr "Try detecting"
+
+msgid "尝试探测门户"
+msgstr "Detect portal"
+
+msgid "默认地址不可用时使用。会先停止服务；若当前在线，会先发送注销，再从拦截跳转里推测门户登录地址。探测不一定成功。"
+msgstr "Use this when the default address does not work. The service is stopped first; if online, a logout is sent, then the portal URL is derived from the captive redirect. Detection may fail."
 
