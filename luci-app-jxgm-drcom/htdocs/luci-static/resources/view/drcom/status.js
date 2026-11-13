@@ -7,7 +7,6 @@
 'require fs';
 'require rpc';
 'require uci';
-'require ui';
 'require drcom/common as common';
 
 var STATEFILE = '/var/run/drcom.state';
