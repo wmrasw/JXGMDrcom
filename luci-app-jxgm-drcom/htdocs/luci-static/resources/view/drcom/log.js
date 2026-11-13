@@ -6,6 +6,7 @@
 'require fs';
 'require poll';
 'require ui';
+'require drcom/common as common';
 
 var LOGFILE = '/var/log/drcom.log';
 var MAXLINES = 200;
@@ -97,7 +98,7 @@ return view.extend({
 		refresh();
 
 		return E([
-			E('h2', {}, _('DrCOM 日志')),
+			common.title(_('DrCOM 日志')),
 			E('div', { 'class': 'cbi-section' }, [
 				E('div', { 'class': 'cbi-section-descr' },
 					_('最近 %d 行日志（%s），每 %d 秒刷新。')
