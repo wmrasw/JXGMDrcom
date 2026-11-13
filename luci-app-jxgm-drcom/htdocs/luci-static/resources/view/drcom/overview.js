@@ -300,7 +300,7 @@ return view.extend({
 		function startOrRestart(action) {
 			return runInit(action).then(function() {
 				return new Promise(function(resolve) {
-					window.setTimeout(resolve, 1500);
+					window.setTimeout(resolve, 5000);
 				});
 			}).then(refreshStatus).then(function() {
 				var badge = document.getElementById('drcom-service-state');
@@ -587,7 +587,7 @@ return view.extend({
 				if (res && res.code === 0) {
 					return fs.exec(SCRIPT, [ 'logout' ]).then(function() {
 						return new Promise(function(resolve) {
-							window.setTimeout(resolve, 1500);
+							window.setTimeout(resolve, 5000);
 						});
 					});
 				}
