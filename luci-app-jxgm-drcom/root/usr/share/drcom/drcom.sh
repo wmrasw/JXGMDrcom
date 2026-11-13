@@ -42,7 +42,7 @@ CFG_USER_AGENT=
 LOG_LEVEL_NUM=2
 
 usage() {
-	echo "Usage: $0 {run|once|login|logout|check|probe <url>|ip|mac|ua|set-mac <mac>}" >&2
+	echo "Usage: $0 {run|once|login|logout|check|probe <url>|discover|ip|mac|ua|set-mac <mac>}" >&2
 	exit 1
 }
 
@@ -513,6 +513,58 @@ do_logout() {
 	return 1
 }
 
+# Behind a captive portal every plain HTTP request is answered with a 302 to
+# the portal login page, which reveals the portal host and port. If nothing
+# redirects (already online) try once more following redirects and look for an
+# ePortal URL in the body, which covers portals that redirect via JavaScript.
+do_discover() {
+	local url headers body loc base
+
+	load_config
+
+	url=${CFG_CHECK_URL:-http://connect.rom.miui.com/generate_204}
+
+	headers=$(curl -s -o /dev/null -D - \
+		--connect-timeout "$CFG_CONNECT_TIMEOUT" \
+		--max-time $((CFG_CONNECT_TIMEOUT * 2)) \
+		--max-redirs 0 "$url" 2>/dev/null)
+
+	loc=$(printf '%s' "$headers" | tr -d '\r' |
+		sed -n 's/^[Ll]ocation:[[:space:]]*//p' | head -n 1)
+
+	if [ -z "$loc" ]; then
+		body=$(curl -s -L \
+			--connect-timeout "$CFG_CONNECT_TIMEOUT" \
+			--max-time $((CFG_CONNECT_TIMEOUT * 3)) "$url" 2>/dev/null)
+
+		loc=$(printf '%s' "$body" | tr -d '\r' |
+			grep -aoiE 'https?://[^"'"'"' <>]*eportal[^"'"'"' <>]*' |
+			head -n 1)
+	fi
+
+	[ -n "$loc" ] || return 1
+
+	case "$loc" in
+		http://*|https://*) ;;
+		*) loc="http://$loc" ;;
+	esac
+
+	case "$loc" in
+		*/eportal/portal/login*)
+			printf '%s\n' "${loc%%\?*}"
+			return 0
+			;;
+	esac
+
+	base=${loc%%/eportal*}
+
+	if [ "$base" = "$loc" ]; then
+		printf '%s\n' "${loc%%\?*}"
+	else
+		printf '%s/eportal/portal/login\n' "$base"
+	fi
+}
+
 do_run() {
 	load_config
 
@@ -730,7 +782,8 @@ case "$1" in
 	once)  do_once ;;
 	login) do_login ;;
 	logout) do_logout ;;
-	check) do_check ;;
+	check)  do_check ;;
+	discover) do_discover ;;
 	probe) do_probe "$2" ;;
 	mac)   do_mac ;;
 	ip)    do_ip ;;

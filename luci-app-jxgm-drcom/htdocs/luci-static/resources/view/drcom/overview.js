@@ -396,6 +396,15 @@ return view.extend({
 		o.placeholder = 'http://10.100.100.30:801/eportal/portal/login';
 		o.rmempty = true;
 
+		o = s.taboption('portal', form.DummyValue, '_discover', _('自动探测'),
+			_('先停止服务（保持未登录）再点按钮，从未联网时的跳转里推断门户地址。'));
+		o.rawhtml = true;
+		o.optional = true;
+		o.cfgvalue = function() {
+			return '<button type="button" class="cbi-button cbi-button-neutral" data-drcom-discover="1">%s</button>'
+				.format(_('探测门户地址'));
+		};
+
 		o = s.taboption('portal', form.Value, 'check_url', _('连通性检测地址'),
 			_('返回 HTTP 204 即视为外网在线。'));
 		o.placeholder = 'http://connect.rom.miui.com/generate_204';
@@ -561,7 +570,46 @@ return view.extend({
 			]);
 		}
 
+		function runDiscover() {
+			ui.addNotification(null, E('p', {}, _('正在探测…')), 'info');
+
+			return fs.exec(SCRIPT, [ 'discover' ]).then(function(res) {
+				var url = String((res && res.stdout) || '').trim();
+
+				if (!url) {
+					ui.addNotification(null, E('p', {},
+						_('未探测到门户（可能已在线，或不是拦截式门户）。')), 'warning');
+
+					return;
+				}
+
+				var input = document.getElementById('cbid.drcom.main.portal_url')
+					|| document.querySelector('input[id$=".portal_url"]');
+
+				if (input) {
+					input.value = url;
+					input.dispatchEvent(new Event('change', { bubbles: true }));
+				}
+
+				ui.addNotification(null, E('p', {},
+					_('已填入 %s，保存后生效。').format(url)), 'info');
+			}).catch(function(err) {
+				ui.addNotification(null, E('p',
+					String(err.message || err)), 'danger');
+			});
+		}
+
 		function handleAction(ev) {
+			var disco = ev.target.closest
+				? ev.target.closest('[data-drcom-discover]')
+				: null;
+
+			if (disco) {
+				ev.preventDefault();
+				runDiscover();
+				return;
+			}
+
 			var macBtn = closestData(ev.target, 'data-drcom-mac', ev.currentTarget);
 
 			if (macBtn) {

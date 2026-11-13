@@ -28,6 +28,7 @@
 - **状态与日志**：`/var/run/drcom.state`（状态、上次登录、最近结果）+ `/var/log/drcom.log`（自动轮转）
 - **LuCI 页面**：运行状态、立即登录 / 重启 / 停止、三页配置、日志页（可暂停刷新、清除日志）
 - **门户诊断**：连通性检测地址改完自动探测并显示结果；上行 IP、上行端口 MAC 直接展示
+- **门户地址自动探测**：未登录时从拦截跳转里推断 ePortal 地址，换学校时不用手找
 - **可选改 MAC**：把上行端口的 MAC 写入 `/etc/config/network` 并重载网络（带二次确认）
 - **中文 / English 界面**：跟随系统语言切换，翻译随包内置，不需要额外装语言包
 - **关于浮窗**：页面右上角的 ⓘ 按钮显示名称、版本、许可证、作者与实测信息
@@ -122,6 +123,7 @@ python tools/mkipk.py
 /usr/share/drcom/drcom.sh logout         # 向门户发送 unbind 请求，手动下线当前账号
 /usr/share/drcom/drcom.sh check          # 在线 exit 0，离线 exit 1
 /usr/share/drcom/drcom.sh probe <url>    # 打印 URL 的 HTTP 状态码（000 = 不可达）
+/usr/share/drcom/drcom.sh discover       # 未登录时从拦截跳转推断门户登录地址
 /usr/share/drcom/drcom.sh ip             # 打印上行 IPv4 地址
 /usr/share/drcom/drcom.sh mac            # 打印上行网卡的真实 MAC
 /usr/share/drcom/drcom.sh set-mac <mac>  # 写入 /etc/config/network 并重载网络（会短暂断网）
@@ -141,6 +143,11 @@ python tools/mkipk.py
 不需要重启路由器。
 
 如果希望它继续尝试，在「高级」里勾选**配置错误时继续重试**，行为就退回按重试间隔尝试。
+
+**不知道学校的门户地址怎么办**
+
+先点「停止」保持未登录，再在「门户」页点「探测门户地址」：插件会请求一次外网，从门户的
+302 跳转里解析出 ePortal 地址并填进输入框，保存即可。已经在线或门户不是拦截式时探测不到。
 
 **提示「IP 已在线」**
 
