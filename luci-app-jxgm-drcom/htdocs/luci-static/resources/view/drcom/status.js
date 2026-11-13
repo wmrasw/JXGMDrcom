@@ -91,10 +91,12 @@ function fmtTime(ts) {
 
 return view.extend({
 	load: function() {
-		return Promise.all([
-			L.resolveDefault(callServiceList('drcom'), {}),
-			L.resolveDefault(fs.read(STATEFILE), '')
-		]);
+		return uci.load('drcom').then(function() {
+			return Promise.all([
+				L.resolveDefault(callServiceList('drcom'), {}),
+				L.resolveDefault(fs.read(STATEFILE), '')
+			]);
+		});
 	},
 
 	render: function(res) {
