@@ -10,6 +10,15 @@
 		}
 	},
 
+	"admin/services/drcom/status": {
+		"title": "Status",
+		"order": 0,
+		"action": {
+			"type": "view",
+			"path": "drcom/status"
+		}
+	},
+
 	"admin/services/drcom/overview": {
 		"title": "Settings",
 		"order": 1,

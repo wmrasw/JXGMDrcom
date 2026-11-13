@@ -33,6 +33,9 @@ CFG_COOLDOWN=300
 CFG_CONNECT_TIMEOUT=5
 CFG_USE_REAL_MAC=0
 CFG_IGNORE_CONFIG_ERROR=0
+CFG_STATUS_ENABLED=1
+CFG_STATUS_URL=
+CFG_STATUS_INTERVAL=30
 CFG_LOG_LEVEL=info
 CFG_DEVICE_TYPE=pc
 CFG_V=7911
@@ -224,6 +227,9 @@ load_config() {
 	config_get CFG_CONNECT_TIMEOUT main connect_timeout
 	config_get_bool CFG_USE_REAL_MAC main use_real_mac 0
 	config_get_bool CFG_IGNORE_CONFIG_ERROR main ignore_config_error 0
+	config_get_bool CFG_STATUS_ENABLED main status_enabled 1
+	config_get CFG_STATUS_URL main status_url ''
+	config_get CFG_STATUS_INTERVAL main status_interval 30
 	config_get CFG_LOG_LEVEL main log_level
 	config_get CFG_DEVICE_TYPE main device_type
 	config_get CFG_V main v
@@ -607,18 +613,25 @@ do_discover() {
 # elapsed seconds plus transferred KB; the page is served on port 9002 and the
 # JS variables look like "s1=020;sec=439;uf=17963;df=97224;".
 do_session() {
-	local host body sec uf df
+	local url host body sec uf df
 
 	load_config
 
-	host=$(printf '%s' "$CFG_PORTAL_URL" |
-		sed -n 's#^https\?://\([^/:]*\).*/.*#\1#p')
+	[ "$CFG_STATUS_ENABLED" = "1" ] || return 3
 
-	[ -n "$host" ] || return 1
+	url=$CFG_STATUS_URL
+
+	if [ -z "$url" ]; then
+		host=$(printf '%s' "$CFG_PORTAL_URL" |
+			sed -n 's#^https\?://\([^/:]*\).*/.*#\1#p')
+
+		[ -n "$host" ] || return 1
+		url="http://${host}:9002/"
+	fi
 
 	body=$(curl -s --connect-timeout "$CFG_CONNECT_TIMEOUT" \
 		--max-time $((CFG_CONNECT_TIMEOUT * 2)) \
-		"http://${host}:9002/" 2>/dev/null)
+		"$url" 2>/dev/null)
 
 	[ -n "$body" ] || return 1
 

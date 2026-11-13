@@ -372,3 +372,39 @@ msgstr "Try http://%s:<port>/eportal/portal/login manually; if unsure about the 
 msgid "在线时长"
 msgstr "Online time"
 
+msgid "运行详情"
+msgstr "Details"
+
+msgid "服务状态、在线时长与最近一次认证结果。"
+msgstr "Service state, online time and the latest authentication result."
+
+msgid "连通性检测"
+msgstr "Connectivity check"
+
+msgid "状态页设置"
+msgstr "Status page"
+
+msgid "这些选项保存在 /etc/config/drcom，保存后立即生效。"
+msgstr "These options are stored in /etc/config/drcom and apply immediately after saving."
+
+msgid "启用状态信息"
+msgstr "Enable status info"
+
+msgid "关闭后，本页不再读取门户状态页，在线时长和流量显示为 —。"
+msgstr "When disabled this page no longer reads the portal status page; online time and traffic show —."
+
+msgid "状态地址"
+msgstr "Status URL"
+
+msgid "留空则使用门户主机的 9002 端口。"
+msgstr "Leave empty to use port 9002 on the portal host."
+
+msgid "刷新间隔"
+msgstr "Refresh interval"
+
+msgid "本页刷新这些信息的秒数。"
+msgstr "Seconds between refreshes of this page."
+
+msgid "可用（HTTP %s）"
+msgstr "Reachable (HTTP %s)"
+

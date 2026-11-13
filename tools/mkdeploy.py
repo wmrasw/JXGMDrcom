@@ -35,6 +35,8 @@ FILES = [
      "usr/lib/lua/luci/i18n/luci-app-jxgm-drcom.en.lmo", 0o644),
     ("htdocs/luci-static/resources/view/drcom/overview.js",
      "www/luci-static/resources/view/drcom/overview.js", 0o644),
+    ("htdocs/luci-static/resources/view/drcom/status.js",
+     "www/luci-static/resources/view/drcom/status.js", 0o644),
     ("htdocs/luci-static/resources/view/drcom/log.js",
      "www/luci-static/resources/view/drcom/log.js", 0o644),
 ]
