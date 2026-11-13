@@ -491,7 +491,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.taboption('advanced', form.Value, 'user_agent', _('User-Agent'),
-			_('留空则使用默认 UA。（HTTP(S) 重写代理插件可能改写该请求头。）'));
+			_('留空则使用默认 UA。（HTTP(S) 重写代理插件可能改写该 UA。）'));
 		o.placeholder = defaultUa;
 		o.rmempty = true;
 
