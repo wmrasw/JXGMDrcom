@@ -354,3 +354,6 @@ msgstr "Detect portal"
 msgid "默认地址不可用时使用。会先停止服务；若当前在线，会先发送注销，再从拦截跳转里推测门户登录地址。探测不一定成功。"
 msgstr "Use this when the default address does not work. The service is stopped first; if online, a logout is sent, then the portal URL is derived from the captive redirect. Detection may fail."
 
+msgid "未找到门户地址输入框，请手动填写：%s"
+msgstr "Portal URL field not found; please fill it in manually: %s"
+

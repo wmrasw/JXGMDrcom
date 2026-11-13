@@ -390,6 +390,10 @@ portal_login() {
 			sed -n 's/.*"msg":[[:space:]]*"\([^"]*\)".*/\1/p')
 	fi
 
+	if [ -z "$result" ]; then
+		log warn "unexpected portal response (wrong URL or HTTP error): $(printf '%s' "$json" | cut -c1-120)"
+	fi
+
 	[ -n "$msg" ] || msg="(no message)"
 
 	if [ "$result" = "1" ]; then
@@ -524,7 +528,7 @@ do_logout() {
 # redirects (already online) try once more following redirects and look for an
 # ePortal URL in the body, which covers portals that redirect via JavaScript.
 do_discover() {
-	local url headers body loc origin found result
+	local url headers body loc origin found result port
 
 	load_config
 
@@ -573,7 +577,12 @@ do_discover() {
 				--connect-timeout "$CFG_CONNECT_TIMEOUT" \
 				--max-time $((CFG_CONNECT_TIMEOUT * 3)) "$loc" 2>/dev/null)
 
-			found=$(printf '%s' "$body" | tr -d '\r' |
+			# Some portals write the URL as a JS string with escaped slashes.
+			body=$(printf '%s' "$body" | tr -d '\r' | sed 's#\\/#/#g')
+
+			logq debug "discover: landing page: $(printf '%s' "$body" | head -c 300)"
+
+			found=$(printf '%s' "$body" |
 				grep -aoiE 'https?://[^"'"'"' <>]*eportal[^"'"'"' <>]*' |
 				head -n 1)
 
@@ -581,13 +590,26 @@ do_discover() {
 				logq info "discover: landing page points to $found"
 				loc=$found
 			else
-				found=$(printf '%s' "$body" | tr -d '\r' |
+				found=$(printf '%s' "$body" |
 					grep -aoiE '/[a-z0-9_./-]*eportal[a-z0-9_./?=&-]*' |
 					head -n 1)
 
 				if [ -n "$found" ]; then
 					origin=$(printf '%s' "$loc" |
 						sed -n 's#^\(https\?://[^/]*\).*#\1#p')
+
+					# The landing page may live on another port than the portal.
+					case "$origin" in
+						*:[0-9]*) ;;
+						*)
+							port=$(printf '%s' "$body" |
+								grep -aoE ':[0-9]{2,5}/eportal' |
+								head -n 1 | cut -d/ -f1)
+
+							[ -n "$port" ] && origin="${origin}${port}"
+							;;
+					esac
+
 					loc="${origin}${found}"
 					logq info "discover: landing page points to $loc"
 				else

@@ -269,6 +269,7 @@ return view.extend({
 	},
 
 	render: function(res) {
+		var portalInput = null;
 		var running = isRunning(res[0]);
 		var state = parseState(res[1]);
 		var defaultUa = String((res[2] && res[2].stdout) || '').trim() || 'curl/8.x';
@@ -608,13 +609,23 @@ return view.extend({
 					return;
 				}
 
-				var input = document.getElementById('cbid.drcom.main.portal_url')
-					|| document.querySelector('input[id$=".portal_url"]');
+				var input = portalInput;
 
-				if (input) {
-					input.value = url;
-					input.dispatchEvent(new Event('change', { bubbles: true }));
+				if (!input || !document.body.contains(input)) {
+					input = document.getElementById('cbid.drcom.main.portal_url')
+						|| document.querySelector('input[id$=".portal_url"]');
 				}
+
+				if (!input) {
+					ui.addNotification(null, E('p', {},
+						_('未找到门户地址输入框，请手动填写：%s').format(url)), 'warning');
+
+					return;
+				}
+
+				input.value = url;
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+				input.dispatchEvent(new Event('change', { bubbles: true }));
 
 				ui.addNotification(null, E('p', {},
 					_('已填入 %s，保存后生效。').format(url)), 'info');
@@ -740,7 +751,7 @@ return view.extend({
 			]);
 
 			// node is not attached to the document yet, so look inside it.
-			var portalInput = node.querySelector('input[id$=".portal_url"]')
+			portalInput = node.querySelector('input[id$=".portal_url"]')
 				|| node.querySelector('input[name$=".portal_url"]');
 
 			if (portalInput && portalInput.parentNode) {
