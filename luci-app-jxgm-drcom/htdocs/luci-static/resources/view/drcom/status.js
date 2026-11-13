@@ -37,8 +37,7 @@ var CSS = [
 	'.drcom-row .k{flex:0 0 7rem;color:var(--muted-text,#8898aa)}',
 	'.drcom-row .v{min-width:0;word-break:break-all}',
 	'.drcom-note{font-size:.8rem;color:var(--muted-text,#8898aa);margin-top:.5rem}',
-	'.drcom-collapse{margin-top:1rem}',
-	'.drcom-collapse>summary{cursor:pointer;font-weight:600;padding:.4rem 0;list-style:revert}'
+
 ].join('');
 
 function isRunning(entry) {
@@ -140,6 +139,8 @@ return view.extend({
 		var portal = uci.get('drcom', 'main', 'portal_url') || '';
 		var iface = uci.get('drcom', 'main', 'iface') || 'wan';
 
+		var portalHost = (portal.match(/^https?:\/\/([^/:]+)/) || [])[1] || '';
+
 		var configured = !!(uci.get('drcom', 'main', 'username')
 			&& uci.get('drcom', 'main', 'password'));
 
@@ -191,7 +192,8 @@ return view.extend({
 
 		var m = new form.Map('drcom');
 
-		var s = m.section(form.TypedSection, 'drcom', '');
+		var s = m.section(form.TypedSection, 'drcom', _('状态页设置'),
+			_('这些选项保存在 /etc/config/drcom，保存后立即生效。'));
 		s.anonymous = true;
 
 		var o = s.option(form.Flag, 'status_enabled', _('启用状态信息'),
@@ -204,7 +206,9 @@ return view.extend({
 
 		o = s.option(form.Value, 'status_url', _('状态地址'),
 			_('留空则使用门户主机的 9002 端口。'));
-		o.placeholder = 'http://10.100.100.30:9002/';
+		o.placeholder = portalHost
+			? 'http://' + portalHost + ':9002/'
+			: 'http://<host>:9002/';
 		o.rmempty = true;
 
 		o = s.option(form.Value, 'status_interval', _('刷新间隔'),
@@ -294,12 +298,7 @@ return view.extend({
 				common.header(),
 				notice,
 				top,
-				E('details', { 'class': 'drcom-collapse' }, [
-					E('summary', {}, _('状态页设置')),
-					E('div', { 'class': 'cbi-section-descr' },
-						_('这些选项保存在 /etc/config/drcom，保存后立即生效。')),
-					node
-				])
+				node
 			].filter(Boolean));
 		});
 	}
