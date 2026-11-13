@@ -36,7 +36,9 @@ var CSS = [
 	'.drcom-row{display:flex;gap:.75rem;padding:.2rem 0;font-size:.9rem}',
 	'.drcom-row .k{flex:0 0 7rem;color:var(--muted-text,#8898aa)}',
 	'.drcom-row .v{min-width:0;word-break:break-all}',
-	'.drcom-note{font-size:.8rem;color:var(--muted-text,#8898aa);margin-top:.5rem}'
+	'.drcom-note{font-size:.8rem;color:var(--muted-text,#8898aa);margin-top:.5rem}',
+	'.drcom-collapse{margin-top:1rem}',
+	'.drcom-collapse>summary{cursor:pointer;font-weight:600;padding:.4rem 0;list-style:revert}'
 ].join('');
 
 function isRunning(entry) {
@@ -189,8 +191,7 @@ return view.extend({
 
 		var m = new form.Map('drcom');
 
-		var s = m.section(form.TypedSection, 'drcom', _('状态页设置'),
-			_('这些选项保存在 /etc/config/drcom，保存后立即生效。'));
+		var s = m.section(form.TypedSection, 'drcom', '');
 		s.anonymous = true;
 
 		var o = s.option(form.Flag, 'status_enabled', _('启用状态信息'),
@@ -293,7 +294,12 @@ return view.extend({
 				common.header(),
 				notice,
 				top,
-				node
+				E('details', { 'class': 'drcom-collapse' }, [
+					E('summary', {}, _('状态页设置')),
+					E('div', { 'class': 'cbi-section-descr' },
+						_('这些选项保存在 /etc/config/drcom，保存后立即生效。')),
+					node
+				])
 			].filter(Boolean));
 		});
 	}
