@@ -563,7 +563,7 @@ return view.extend({
 
 		function confirmDiscover() {
 			ui.showModal(_('尝试探测门户'), [
-				E('p', {}, _('会先停止服务；若当前在线，会先发送注销。然后在门户主机上依次探测 801、80、8080、8081、8000、8090 端口，结果只显示，不自动填入。')),
+				E('p', {}, _('此操作会先停止服务；若当前在线，会先发送注销请求。随后在门户主机上依次探测 801、80、8080、8081、8000、8090 端口，稍后显示探测结果。')),
 				E('div', { 'class': 'right', 'style': 'margin-top:1rem' }, [
 					E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('取消')),
 					' ',
@@ -611,7 +611,7 @@ return view.extend({
 						ui.showModal(_('探测结果'), [
 							E('p', {}, _('找到门户主机 %s，但探测的几个端口都没有响应 ePortal。').format(host)),
 							E('p', { 'style': 'color:var(--muted-text,#8898aa)' },
-								_('可以手动试 http://%s:端口/eportal/portal/login，端口向网络中心确认或抓包查看。').format(host)),
+								_('可以手动尝试 http://%s:端口/eportal/portal/login；端口不确定时可向网络中心确认或抓包查看。').format(host)),
 							E('div', { 'class': 'right', 'style': 'margin-top:1rem' },
 								E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('关闭')))
 						]);
@@ -632,7 +632,7 @@ return view.extend({
 					E('pre', { 'style': 'user-select:all;white-space:pre-wrap' }, url),
 					E('p', { 'style': 'color:var(--muted-text,#8898aa)' }, same
 						? _('和当前配置相同。')
-						: _('和当前配置不同，可手动填入后保存；端口不对时可自行尝试其他端口。')),
+						: _('和当前配置不同，可手动填入并保存后尝试登录。')),
 					E('div', { 'class': 'right', 'style': 'margin-top:1rem' },
 						E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('关闭')))
 				]);

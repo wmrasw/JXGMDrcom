@@ -348,8 +348,8 @@ msgstr "Try detecting"
 msgid "尝试探测门户"
 msgstr "Detect portal"
 
-msgid "会先停止服务；若当前在线，会先发送注销。然后在门户主机上依次探测 801、80、8080、8081、8000、8090 端口，结果只显示，不自动填入。"
-msgstr "Stops the service first (and logs out if online), then probes ports 801, 80, 8080, 8081, 8000 and 8090 on the portal host. The result is only displayed, never filled in automatically."
+msgid "此操作会先停止服务；若当前在线，会先发送注销请求。随后在门户主机上依次探测 801、80、8080、8081、8000、8090 端口，稍后显示探测结果。"
+msgstr "The service is stopped first, and a logout request is sent if currently online. The portal host is then probed on ports 801, 80, 8080, 8081, 8000 and 8090; the result is shown afterwards."
 
 msgid "探测结果"
 msgstr "Detection result"
@@ -360,12 +360,12 @@ msgstr "The portal login URL is probably:"
 msgid "和当前配置相同。"
 msgstr "Same as the current configuration."
 
-msgid "和当前配置不同，可手动填入后保存；端口不对时可自行尝试其他端口。"
-msgstr "Different from the current configuration; fill it in manually and save. If the port looks wrong, try another port."
+msgid "和当前配置不同，可手动填入并保存后尝试登录。"
+msgstr "Different from the current configuration; fill it in, save, then try logging in."
 
 msgid "找到门户主机 %s，但探测的几个端口都没有响应 ePortal。"
 msgstr "Found the portal host %s, but none of the probed ports answered as ePortal."
 
-msgid "可以手动试 http://%s:端口/eportal/portal/login，端口向网络中心确认或抓包查看。"
-msgstr "Try http://%s:<port>/eportal/portal/login manually; ask the network center or capture traffic to confirm the port."
+msgid "可以手动尝试 http://%s:端口/eportal/portal/login；端口不确定时可向网络中心确认或抓包查看。"
+msgstr "Try http://%s:<port>/eportal/portal/login manually; if unsure about the port, ask the network center or capture traffic."
 
