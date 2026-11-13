@@ -700,7 +700,7 @@ return view.extend({
 				}, _('尝试探测')));
 			}
 
-			return E([ common.header(), node ]);
+			return E([ common.title(_('DrCOM 设置')), node ]);
 		});
 	}
 });

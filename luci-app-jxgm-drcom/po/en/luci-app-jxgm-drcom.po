@@ -417,3 +417,6 @@ msgstr "Details"
 msgid "关闭后，本页不再读取门户状态页，时长和流量显示为 —。"
 msgstr "When disabled this page no longer reads the portal status page; time and traffic show —."
 
+msgid "DrCOM 设置"
+msgstr "DrCOM settings"
+

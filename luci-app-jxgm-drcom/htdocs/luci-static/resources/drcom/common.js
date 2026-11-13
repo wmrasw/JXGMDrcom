@@ -52,21 +52,27 @@ function aboutButton() {
 	}, 'i');
 }
 
-function header() {
-	var titleEl = E('h2', {}, _('JXGM DrCOM'));
+// Some themes hide a heading that duplicates the menu title by adding
+// vt-repeat (collapsing it to 1px); drop the class, and keep dropping it.
+function title(text) {
+	var el = E('h2', {}, text);
 
-	// Some themes hide a heading duplicating the menu title by adding
-	// vt-repeat (collapsing it to 1px); drop the class, and keep dropping it.
 	var stripRepeat = function() {
-		if (titleEl.classList.contains('vt-repeat'))
-			titleEl.classList.remove('vt-repeat');
+		if (el.classList.contains('vt-repeat'))
+			el.classList.remove('vt-repeat');
 	};
 
 	stripRepeat();
 
 	if (window.MutationObserver)
-		new MutationObserver(stripRepeat).observe(titleEl,
+		new MutationObserver(stripRepeat).observe(el,
 			{ attributes: true, attributeFilter: [ 'class' ] });
+
+	return el;
+}
+
+function header() {
+	var titleEl = title(_('JXGM DrCOM'));
 
 	return E('div', {
 		'style': 'display:flex;align-items:flex-start;gap:.75rem'
@@ -84,5 +90,6 @@ function header() {
 
 return {
 	header: header,
+	title: title,
 	PKG_VERSION: PKG_VERSION
 };
