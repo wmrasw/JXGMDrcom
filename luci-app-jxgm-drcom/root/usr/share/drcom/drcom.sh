@@ -629,6 +629,12 @@ do_session() {
 		url="http://${host}:9002/"
 	fi
 
+	# The AC tends to cache the page per URL; a timestamp keeps the counters live.
+	case "$url" in
+		*\?*) url="${url}&t=$(date +%s)" ;;
+		*)    url="${url}?t=$(date +%s)" ;;
+	esac
+
 	body=$(curl -s --connect-timeout "$CFG_CONNECT_TIMEOUT" \
 		--max-time $((CFG_CONNECT_TIMEOUT * 2)) \
 		"$url" 2>/dev/null)
