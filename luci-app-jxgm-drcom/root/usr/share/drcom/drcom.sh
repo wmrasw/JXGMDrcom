@@ -423,6 +423,7 @@ portal_login() {
 	esac
 
 	log error "login rejected: $msg (result=${result:-?})"
+	[ -n "$json" ] && log debug "raw response: $(printf '%s' "$json" | cut -c1-200)"
 	state_set auth-failed "$msg"
 	return 1
 }
