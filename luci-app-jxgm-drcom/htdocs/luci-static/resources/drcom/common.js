@@ -7,7 +7,7 @@
 
 // Keep in sync with PKG_VERSION in the Makefile; the CI build fails if they
 // disagree, because the about dialog reads this constant.
-var PKG_VERSION = '1.0.3';
+var PKG_VERSION = '1.1.0';
 
 function showAbout() {
 	var row = function(label, value) {

@@ -62,10 +62,10 @@ Download the matching file from [Releases](https://github.com/wmrasw/JXGMDrcom/r
 
 ```sh
 # opkg (OpenWrt 24.10 and earlier, ImmortalWrt, Kwrt)
-opkg install /tmp/luci-app-jxgm-drcom_1.0.3-r1_all.ipk
+opkg install /tmp/luci-app-jxgm-drcom_1.1.0-r1_all.ipk
 
 # apk (OpenWrt 25.12 and later)
-apk add --allow-untrusted /tmp/luci-app-jxgm-drcom-1.0.3-r1.apk
+apk add --allow-untrusted /tmp/luci-app-jxgm-drcom-1.1.0-r1.apk
 
 /etc/init.d/drcom enable
 /etc/init.d/drcom start
