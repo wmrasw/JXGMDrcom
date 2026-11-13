@@ -24,8 +24,12 @@ sys.path.insert(0, HERE)
 from lmo import parse_po  # noqa: E402
 
 ROOT = os.path.dirname(HERE)
-VIEWS = os.path.join(ROOT, "luci-app-jxgm-drcom", "htdocs", "luci-static",
-                     "resources", "view", "drcom")
+VIEW_DIRS = [
+    os.path.join(ROOT, "luci-app-jxgm-drcom", "htdocs", "luci-static",
+                 "resources", "view", "drcom"),
+    os.path.join(ROOT, "luci-app-jxgm-drcom", "htdocs", "luci-static",
+                 "resources", "drcom"),
+]
 PO = os.path.join(ROOT, "luci-app-jxgm-drcom", "po", "en",
                   "luci-app-jxgm-drcom.po")
 
@@ -35,7 +39,12 @@ PATTERN = re.compile(r"""_\(\s*(['"])((?:\\.|(?!\1).)*)\1""")
 def sources():
     found = {}
 
-    for path in sorted(glob.glob(os.path.join(VIEWS, "*.js"))):
+    paths = []
+
+    for d in VIEW_DIRS:
+        paths += sorted(glob.glob(os.path.join(d, "*.js")))
+
+    for path in paths:
         text = io.open(path, encoding="utf-8").read()
 
         for m in PATTERN.finditer(text):

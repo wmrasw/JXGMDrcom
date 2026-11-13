@@ -203,8 +203,9 @@ JXGMDrcom/
 └── luci-app-jxgm-drcom/     # 可直接放进 OpenWrt 源码树的包目录
     ├── Makefile
     ├── po/en/luci-app-jxgm-drcom.po   # 英文翻译源
+    ├── htdocs/luci-static/resources/drcom/common.js   # 页头 + 关于浮窗
     ├── htdocs/luci-static/resources/view/drcom/
-    │   ├── status.js        # 状态页（详情 + 状态页设置）
+    │   ├── status.js        # 状态页（卡片 + 状态页设置）
     │   ├── overview.js      # 状态 + 立即登录 + 启停 + 配置
     │   └── log.js           # 日志（5s 轮询）
     └── root/

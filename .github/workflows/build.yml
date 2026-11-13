@@ -25,7 +25,7 @@ jobs:
       - name: Check version consistency
         run: |
           mk=$(sed -n 's/^PKG_VERSION:=//p' luci-app-jxgm-drcom/Makefile)
-          js=$(sed -n "s/.*var PKG_VERSION = '\([^']*\)'.*/\1/p" luci-app-jxgm-drcom/htdocs/luci-static/resources/view/drcom/overview.js)
+          js=$(sed -n "s/.*var PKG_VERSION = '\([^']*\)'.*/\1/p" luci-app-jxgm-drcom/htdocs/luci-static/resources/drcom/common.js)
           echo "Makefile=$mk overview.js=$js"
           [ -n "$mk" ] && [ "$mk" = "$js" ]
 

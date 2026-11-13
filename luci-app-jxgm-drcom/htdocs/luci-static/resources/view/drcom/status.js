@@ -8,6 +8,7 @@
 'require rpc';
 'require uci';
 'require ui';
+'require drcom/common as common';
 
 var STATEFILE = '/var/run/drcom.state';
 var SCRIPT = '/usr/share/drcom/drcom.sh';
@@ -277,6 +278,7 @@ return view.extend({
 		return m.render().then(function(node) {
 			return E([
 				E('style', {}, CSS),
+				common.header(),
 				top,
 				node
 			]);
