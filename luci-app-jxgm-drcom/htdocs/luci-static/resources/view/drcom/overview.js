@@ -594,7 +594,12 @@ return view.extend({
 			}).then(function() {
 				return fs.exec(SCRIPT, [ 'discover' ]);
 			}).then(function(res) {
-				var url = String((res && res.stdout) || '').trim();
+				var lines = String((res && res.stdout) || '')
+					.split(/\r?\n/)
+					.map(function(s) { return s.trim(); })
+					.filter(function(s) { return /^https?:\/\//.test(s); });
+
+				var url = lines.length ? lines[lines.length - 1] : '';
 
 				if (!url) {
 					ui.addNotification(null, E('p', {},

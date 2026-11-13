@@ -187,6 +187,12 @@ state_get() {
 	sed -n "s/^$1=//p" "$STATEFILE" | head -n 1
 }
 
+# Same as log() but keeps stdout clean for subcommands whose output is parsed
+# by the LuCI view (discover).
+logq() {
+	log "$@" >/dev/null
+}
+
 state_set() {
 	local status="$1"
 	local message="$2"
@@ -523,7 +529,7 @@ do_discover() {
 	load_config
 
 	url=${CFG_CHECK_URL:-http://connect.rom.miui.com/generate_204}
-	log info "discover: probing $url"
+	logq info "discover: probing $url"
 
 	headers=$(curl -s -o /dev/null -D - \
 		--connect-timeout "$CFG_CONNECT_TIMEOUT" \
@@ -533,7 +539,7 @@ do_discover() {
 	loc=$(printf '%s' "$headers" | tr -d '\r' |
 		sed -n 's/^[Ll]ocation:[[:space:]]*//p' | head -n 1)
 
-	[ -n "$loc" ] && log info "discover: redirect -> $loc"
+	[ -n "$loc" ] && logq info "discover: redirect -> $loc"
 
 	# No redirect at all: online already, or the portal uses a JS redirect.
 	if [ -z "$loc" ]; then
@@ -546,11 +552,11 @@ do_discover() {
 			head -n 1)
 
 		if [ -z "$loc" ]; then
-			log warn "discover: no redirect, probably already online"
+			logq warn "discover: no redirect, probably already online"
 			return 1
 		fi
 
-		log info "discover: found in body -> $loc"
+		logq info "discover: found in body -> $loc"
 	fi
 
 	case "$loc" in
@@ -572,7 +578,7 @@ do_discover() {
 				head -n 1)
 
 			if [ -n "$found" ]; then
-				log info "discover: landing page points to $found"
+				logq info "discover: landing page points to $found"
 				loc=$found
 			else
 				found=$(printf '%s' "$body" | tr -d '\r' |
@@ -583,9 +589,9 @@ do_discover() {
 					origin=$(printf '%s' "$loc" |
 						sed -n 's#^\(https\?://[^/]*\).*#\1#p')
 					loc="${origin}${found}"
-					log info "discover: landing page points to $loc"
+					logq info "discover: landing page points to $loc"
 				else
-					log warn "discover: no ePortal endpoint on $loc"
+					logq warn "discover: no ePortal endpoint on $loc"
 					return 1
 				fi
 			fi
@@ -602,7 +608,7 @@ do_discover() {
 	esac
 
 	printf '%s\n' "$result"
-	log info "discover: portal login at $result"
+	logq info "discover: portal login at $result"
 }
 
 
