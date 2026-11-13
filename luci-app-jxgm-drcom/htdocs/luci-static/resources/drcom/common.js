@@ -2,6 +2,7 @@
  * Copyright 2026 wmrasw
  */
 'use strict';
+'require baseclass';
 'require ui';
 
 // Keep in sync with PKG_VERSION in the Makefile; the CI build fails if they
@@ -88,8 +89,9 @@ function header() {
 	]);
 }
 
-return {
+return baseclass.extend({
+	__name__: 'drcom.common',
+	PKG_VERSION: PKG_VERSION,
 	header: header,
-	title: title,
-	PKG_VERSION: PKG_VERSION
-};
+	title: title
+});
