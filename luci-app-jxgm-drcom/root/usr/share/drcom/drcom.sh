@@ -518,11 +518,12 @@ do_logout() {
 # redirects (already online) try once more following redirects and look for an
 # ePortal URL in the body, which covers portals that redirect via JavaScript.
 do_discover() {
-	local url headers body loc base
+	local url headers body loc origin found result
 
 	load_config
 
 	url=${CFG_CHECK_URL:-http://connect.rom.miui.com/generate_204}
+	log info "discover: probing $url"
 
 	headers=$(curl -s -o /dev/null -D - \
 		--connect-timeout "$CFG_CONNECT_TIMEOUT" \
@@ -532,6 +533,9 @@ do_discover() {
 	loc=$(printf '%s' "$headers" | tr -d '\r' |
 		sed -n 's/^[Ll]ocation:[[:space:]]*//p' | head -n 1)
 
+	[ -n "$loc" ] && log info "discover: redirect -> $loc"
+
+	# No redirect at all: online already, or the portal uses a JS redirect.
 	if [ -z "$loc" ]; then
 		body=$(curl -s -L \
 			--connect-timeout "$CFG_CONNECT_TIMEOUT" \
@@ -540,30 +544,67 @@ do_discover() {
 		loc=$(printf '%s' "$body" | tr -d '\r' |
 			grep -aoiE 'https?://[^"'"'"' <>]*eportal[^"'"'"' <>]*' |
 			head -n 1)
-	fi
 
-	[ -n "$loc" ] || return 1
+		if [ -z "$loc" ]; then
+			log warn "discover: no redirect, probably already online"
+			return 1
+		fi
+
+		log info "discover: found in body -> $loc"
+	fi
 
 	case "$loc" in
 		http://*|https://*) ;;
 		*) loc="http://$loc" ;;
 	esac
 
+	# Most campuses redirect to a landing page (a79.htm and friends) that in
+	# turn points at the ePortal; fetch it and look for the real endpoint.
 	case "$loc" in
-		*/eportal/portal/login*)
-			printf '%s\n' "${loc%%\?*}"
-			return 0
+		*eportal*) ;;
+		*)
+			body=$(curl -s -L \
+				--connect-timeout "$CFG_CONNECT_TIMEOUT" \
+				--max-time $((CFG_CONNECT_TIMEOUT * 3)) "$loc" 2>/dev/null)
+
+			found=$(printf '%s' "$body" | tr -d '\r' |
+				grep -aoiE 'https?://[^"'"'"' <>]*eportal[^"'"'"' <>]*' |
+				head -n 1)
+
+			if [ -n "$found" ]; then
+				log info "discover: landing page points to $found"
+				loc=$found
+			else
+				found=$(printf '%s' "$body" | tr -d '\r' |
+					grep -aoiE '/[a-z0-9_./-]*eportal[a-z0-9_./?=&-]*' |
+					head -n 1)
+
+				if [ -n "$found" ]; then
+					origin=$(printf '%s' "$loc" |
+						sed -n 's#^\(https\?://[^/]*\).*#\1#p')
+					loc="${origin}${found}"
+					log info "discover: landing page points to $loc"
+				else
+					log warn "discover: no ePortal endpoint on $loc"
+					return 1
+				fi
+			fi
 			;;
 	esac
 
-	base=${loc%%/eportal*}
+	case "$loc" in
+		*/eportal/portal/login*)
+			result=${loc%%\?*}
+			;;
+		*)
+			result="${loc%%/eportal*}/eportal/portal/login"
+			;;
+	esac
 
-	if [ "$base" = "$loc" ]; then
-		printf '%s\n' "${loc%%\?*}"
-	else
-		printf '%s/eportal/portal/login\n' "$base"
-	fi
+	printf '%s\n' "$result"
+	log info "discover: portal login at $result"
 }
+
 
 do_run() {
 	load_config
