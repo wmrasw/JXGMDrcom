@@ -138,6 +138,18 @@ return view.extend({
 		var portal = uci.get('drcom', 'main', 'portal_url') || '';
 		var iface = uci.get('drcom', 'main', 'iface') || 'wan';
 
+		var configured = !!(uci.get('drcom', 'main', 'username')
+			&& uci.get('drcom', 'main', 'password'));
+
+		var notice = configured ? null : E('div', { 'class': 'alert-message warning' }, [
+			E('h4', {}, _('尚未配置账号')),
+			E('p', {}, _('填写学号、密码和运营商后，才能自动登录。')),
+			E('a', {
+				'class': 'cbi-button cbi-button-action',
+				'href': L.url('admin/services/drcom/overview')
+			}, _('去设置'))
+		]);
+
 		var top = E('div', { 'class': 'drcom-top' }, [
 			E('div', { 'class': 'drcom-head' }, [
 				E('h3', {}, _('运行状态')),
@@ -279,9 +291,10 @@ return view.extend({
 			return E([
 				E('style', {}, CSS),
 				common.header(),
+				notice,
 				top,
 				node
-			]);
+			].filter(Boolean));
 		});
 	}
 });

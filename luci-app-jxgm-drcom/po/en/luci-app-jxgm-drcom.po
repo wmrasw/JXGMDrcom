@@ -420,3 +420,12 @@ msgstr "When disabled this page no longer reads the portal status page; time and
 msgid "DrCOM 设置"
 msgstr "DrCOM settings"
 
+msgid "尚未配置账号"
+msgstr "No account configured yet"
+
+msgid "填写学号、密码和运营商后，才能自动登录。"
+msgstr "Fill in the student ID, password and ISP to enable automatic login."
+
+msgid "去设置"
+msgstr "Open settings"
+
