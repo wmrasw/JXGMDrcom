@@ -342,18 +342,24 @@ msgstr "Detecting…"
 msgid "未探测到门户（可能已在线，或不是拦截式门户）。"
 msgstr "No portal detected (already online, or not a captive portal)."
 
-msgid "已填入 %s，保存后生效。"
-msgstr "Filled in %s; save to apply."
-
 msgid "尝试探测"
 msgstr "Try detecting"
 
 msgid "尝试探测门户"
 msgstr "Detect portal"
 
-msgid "默认地址不可用时使用。会先停止服务；若当前在线，会先发送注销，再从拦截跳转里推测门户登录地址。探测不一定成功。"
-msgstr "Use this when the default address does not work. The service is stopped first; if online, a logout is sent, then the portal URL is derived from the captive redirect. Detection may fail."
+msgid "会先停止服务；若当前在线，会先发送注销。然后在门户主机上依次探测 801、80、8080、8081、8000、8090 端口，结果只显示，不自动填入。"
+msgstr "Stops the service first (and logs out if online), then probes ports 801, 80, 8080, 8081, 8000 and 8090 on the portal host. The result is only displayed, never filled in automatically."
 
-msgid "未找到门户地址输入框，请手动填写：%s"
-msgstr "Portal URL field not found; please fill it in manually: %s"
+msgid "探测结果"
+msgstr "Detection result"
+
+msgid "门户登录地址可能是："
+msgstr "The portal login URL is probably:"
+
+msgid "和当前配置相同。"
+msgstr "Same as the current configuration."
+
+msgid "和当前配置不同，可手动填入后保存；端口不对时可自行尝试其他端口。"
+msgstr "Different from the current configuration; fill it in manually and save. If the port looks wrong, try another port."
 

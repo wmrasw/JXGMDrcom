@@ -269,7 +269,6 @@ return view.extend({
 	},
 
 	render: function(res) {
-		var portalInput = null;
 		var running = isRunning(res[0]);
 		var state = parseState(res[1]);
 		var defaultUa = String((res[2] && res[2].stdout) || '').trim() || 'curl/8.x';
@@ -564,7 +563,7 @@ return view.extend({
 
 		function confirmDiscover() {
 			ui.showModal(_('尝试探测门户'), [
-				E('p', {}, _('默认地址不可用时使用。会先停止服务；若当前在线，会先发送注销，再从拦截跳转里推测门户登录地址。探测不一定成功。')),
+				E('p', {}, _('会先停止服务；若当前在线，会先发送注销。然后在门户主机上依次探测 801、80、8080、8081、8000、8090 端口，结果只显示，不自动填入。')),
 				E('div', { 'class': 'right', 'style': 'margin-top:1rem' }, [
 					E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('取消')),
 					' ',
@@ -609,26 +608,18 @@ return view.extend({
 					return;
 				}
 
-				var input = portalInput;
+				var current = String(uci.get('drcom', 'main', 'portal_url') || '').trim();
+				var same = current === url;
 
-				if (!input || !document.body.contains(input)) {
-					input = document.getElementById('cbid.drcom.main.portal_url')
-						|| document.querySelector('input[id$=".portal_url"]');
-				}
-
-				if (!input) {
-					ui.addNotification(null, E('p', {},
-						_('未找到门户地址输入框，请手动填写：%s').format(url)), 'warning');
-
-					return;
-				}
-
-				input.value = url;
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-				input.dispatchEvent(new Event('change', { bubbles: true }));
-
-				ui.addNotification(null, E('p', {},
-					_('已填入 %s，保存后生效。').format(url)), 'info');
+				ui.showModal(_('探测结果'), [
+					E('p', {}, _('门户登录地址可能是：')),
+					E('pre', { 'style': 'user-select:all;white-space:pre-wrap' }, url),
+					E('p', { 'style': 'color:var(--muted-text,#8898aa)' }, same
+						? _('和当前配置相同。')
+						: _('和当前配置不同，可手动填入后保存；端口不对时可自行尝试其他端口。')),
+					E('div', { 'class': 'right', 'style': 'margin-top:1rem' },
+						E('button', { 'class': 'cbi-button', 'click': ui.hideModal }, _('关闭')))
+				]);
 			}).catch(function(err) {
 				ui.addNotification(null, E('p',
 					String(err.message || err)), 'danger');
@@ -751,7 +742,7 @@ return view.extend({
 			]);
 
 			// node is not attached to the document yet, so look inside it.
-			portalInput = node.querySelector('input[id$=".portal_url"]')
+			var portalInput = node.querySelector('input[id$=".portal_url"]')
 				|| node.querySelector('input[name$=".portal_url"]');
 
 			if (portalInput && portalInput.parentNode) {
