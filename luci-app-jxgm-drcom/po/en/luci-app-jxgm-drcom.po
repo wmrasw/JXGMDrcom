@@ -369,3 +369,6 @@ msgstr "Found the portal host %s, but none of the probed ports answered as ePort
 msgid "可以手动尝试 http://%s:端口/eportal/portal/login；端口不确定时可向网络中心确认或抓包查看。"
 msgstr "Try http://%s:<port>/eportal/portal/login manually; if unsure about the port, ask the network center or capture traffic."
 
+msgid "在线时长"
+msgstr "Online time"
+

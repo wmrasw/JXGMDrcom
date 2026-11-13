@@ -42,7 +42,7 @@ CFG_USER_AGENT=
 LOG_LEVEL_NUM=2
 
 usage() {
-	echo "Usage: $0 {run|once|login|logout|check|probe <url>|discover|ip|mac|ua|set-mac <mac>}" >&2
+	echo "Usage: $0 {run|once|login|logout|check|probe <url>|discover|session|ip|mac|ua|set-mac <mac>}" >&2
 	exit 1
 }
 
@@ -603,6 +603,37 @@ do_discover() {
 	printf '%s\n' "$result"
 	logq info "discover: portal login at $result"
 }
+# Dr.COM clients read the online session from the AC status page and report
+# elapsed seconds plus transferred KB; the page is served on port 9002 and the
+# JS variables look like "s1=020;sec=439;uf=17963;df=97224;".
+do_session() {
+	local host body sec uf df
+
+	load_config
+
+	host=$(printf '%s' "$CFG_PORTAL_URL" |
+		sed -n 's#^https\?://\([^/:]*\).*/.*#\1#p')
+
+	[ -n "$host" ] || return 1
+
+	body=$(curl -s --connect-timeout "$CFG_CONNECT_TIMEOUT" \
+		--max-time $((CFG_CONNECT_TIMEOUT * 2)) \
+		"http://${host}:9002/" 2>/dev/null)
+
+	[ -n "$body" ] || return 1
+
+	sec=$(printf '%s' "$body" | tr -d '\r' |
+		sed -n 's/.*sec=\([0-9][0-9]*\).*/\1/p' | head -n 1)
+	uf=$(printf '%s' "$body" | tr -d '\r' |
+		sed -n 's/.*uf=\([0-9][0-9]*\).*/\1/p' | head -n 1)
+	df=$(printf '%s' "$body" | tr -d '\r' |
+		sed -n 's/.*df=\([0-9][0-9]*\).*/\1/p' | head -n 1)
+
+	[ -n "$sec" ] || return 1
+
+	printf '%s %s %s\n' "$sec" "${uf:-0}" "${df:-0}"
+}
+
 do_run() {
 	load_config
 
@@ -822,6 +853,7 @@ case "$1" in
 	logout) do_logout ;;
 	check)  do_check ;;
 	discover) do_discover ;;
+	session) do_session ;;
 	probe) do_probe "$2" ;;
 	mac)   do_mac ;;
 	ip)    do_ip ;;

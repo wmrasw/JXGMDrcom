@@ -26,6 +26,7 @@
 - **procd 常驻服务**：定时探测外网（HTTP 204），掉线才登录；失败按重试间隔重试，连续失败进入冷静期
 - **完整可配的门户请求**：门户地址、运营商后缀、设备类型（账号前缀 + `terminal_type` 自动配对）、`v` 参数、User-Agent、真实/占位 MAC
 - **状态与日志**：`/var/run/drcom.state`（状态、上次登录、最近结果）+ `/var/log/drcom.log`（自动轮转）
+- **在线时长与流量**：从门户状态页（9002）读取本次在线秒数与上下行 KB，页面按大小自动换算
 - **LuCI 页面**：运行状态、立即登录 / 重启 / 停止、三页配置、日志页（可暂停刷新、清除日志）
 - **门户诊断**：连通性检测地址改完自动探测并显示结果；上行 IP、上行端口 MAC 直接展示
 - **门户地址探测**：登录地址旁的「尝试探测」会给出可能的 ePortal 地址，供手动填入
@@ -124,6 +125,7 @@ python tools/mkipk.py
 /usr/share/drcom/drcom.sh check          # 在线 exit 0，离线 exit 1
 /usr/share/drcom/drcom.sh probe <url>    # 打印 URL 的 HTTP 状态码（000 = 不可达）
 /usr/share/drcom/drcom.sh discover       # 未登录时从拦截跳转推断门户登录地址
+/usr/share/drcom/drcom.sh session        # 打印 sec uf df（秒、上行 KB、下行 KB）
 /usr/share/drcom/drcom.sh ip             # 打印上行 IPv4 地址
 /usr/share/drcom/drcom.sh mac            # 打印上行网卡的真实 MAC
 /usr/share/drcom/drcom.sh set-mac <mac>  # 写入 /etc/config/network 并重载网络（会短暂断网）
