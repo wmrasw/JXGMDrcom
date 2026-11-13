@@ -209,6 +209,7 @@ JXGMDrcom/
 ├── LICENSE                  # Apache License 2.0
 ├── NOTICE                   # copyright and trademark notice
 ├── LICENSES/                # both license texts (code Apache-2.0, docs CC BY 4.0)
+├── AGENTS.md                # project notes for AI coding agents
 ├── CHANGELOG.md
 ├── screenshots/
 ├── tools/

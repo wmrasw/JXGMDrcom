@@ -195,6 +195,7 @@ JXGMDrcom/
 ├── LICENSE                  # Apache License 2.0 全文
 ├── NOTICE                   # 版权与商标声明
 ├── LICENSES/                # 两份许可证全文（代码 Apache-2.0，文档 CC BY 4.0）
+├── AGENTS.md                # 给 AI coding agent 的项目说明（构建/约定/踩坑）
 ├── CHANGELOG.md             # 版本变更记录
 ├── tools/
 │   ├── mkdeploy.py          # 生成手工部署用的 tar.gz
