@@ -8,9 +8,9 @@
 'require rpc';
 'require uci';
 'require ui';
-'require poll';
 
 var STATEFILE = '/var/run/drcom.state';
+var timer = null;
 var SCRIPT = '/usr/share/drcom/drcom.sh';
 
 var callServiceList = rpc.declare({
@@ -247,10 +247,26 @@ return view.extend({
 			});
 		}
 
-		var interval = +uci.get('drcom', 'main', 'status_interval') || 30;
+		// Re-read the interval every round so a saved change applies without
+		// reloading the page.
+		function nextDelay() {
+			var v = +uci.get('drcom', 'main', 'status_interval');
 
-		poll.add(refreshAll, interval);
-		window.setTimeout(refreshAll, 300);
+			return (v > 0 ? v : 30) * 1000;
+		}
+
+		function loop() {
+			Promise.resolve(refreshAll()).catch(function() {}).then(function() {
+				timer = window.setTimeout(loop, nextDelay());
+			});
+		}
+
+		if (timer) {
+			window.clearTimeout(timer);
+			timer = null;
+		}
+
+		window.setTimeout(loop, 300);
 
 		return m.render();
 	}
